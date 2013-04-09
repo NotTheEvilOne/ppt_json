@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JSON.py
+JSON parser abstraction layer
+
+(C) direct Netware Group - All rights reserved
+http://www.direct-netware.de/redirect.py?py;json
+
+This Source Code Form is subject to the terms of the Mozilla Public License,
+v. 2.0. If a copy of the MPL was not distributed with this file, You can
+obtain one at http://mozilla.org/MPL/2.0/.
+
+http://www.direct-netware.de/redirect.py?licenses;mpl2
+// -->
+<project name="json.py" default="compile.pyBuilder">
+	<dirname property="src.basedir" file="${ant.file}" />
+	<property file="${src.basedir}/_extras/build.properties" />
+
+	<target name="compile.pyBuilder" description="Compile src.py ${ant.project.name}">
+		<exec executable="python" dir="${src.basedir}">
+			<arg file="${pyBuilder.filePathName}" />
+			<arg value="--filetype=${pyBuilder.fileTypes}" />
+			<arg value="--include=${src.basedir}/src/" />
+			<arg value="--strip_prefix=${src.basedir}/src/" />
+			<arg value="--output_dirs_chmod=0755" />
+		</exec>
+	</target>
+</project>
