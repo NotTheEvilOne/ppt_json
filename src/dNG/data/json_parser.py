@@ -11,7 +11,7 @@ JSON.py
 JSON parser abstraction layer
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
-http://www.direct-netware.de/redirect.py?php;json
+http://www.direct-netware.de/redirect.py?py;json
 
 This Source Code Form is subject to the terms of the Mozilla Public License,
 v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -32,7 +32,8 @@ except: _unicode_object = { "type": bytes,"str": bytes.decode }
 class direct_json_parser(object):
 #
 	"""
-This class provides a bridge between PHP and JSON to read JSON on the fly.
+This class provides a bridge between Python and JSON to read JSON on the
+fly.
 
 :author:    direct Netware Group
 :copyright: (C) direct Netware Group - All rights reserved
