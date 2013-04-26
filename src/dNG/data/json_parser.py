@@ -73,8 +73,6 @@ Constructor __init__(direct_json_parser)
 :since: v0.1.00
 		"""
 
-		if (event_handler != None): event_handler.debug("#echo(__FILEPATH__)# -json.__init__()- (#echo(__LINE__)#)")
-
 		self.data = None
 		"""
 JSON data
@@ -821,7 +819,6 @@ Sets the EventHandler.
 :since: v0.1.00
 		"""
 
-		if (event_handler != None): event_handler.debug("#echo(__FILEPATH__)# -json.set_event_handler(event_handler)- (#echo(__LINE__)#)")
 		self.event_handler = event_handler
 	#
 
