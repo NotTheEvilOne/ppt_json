@@ -26,8 +26,16 @@ NOTE_END //n"""
 
 import json, re
 
-try: _unicode_object = { "type": unicode,"str": unicode.encode }
-except: _unicode_object = { "type": bytes,"str": bytes.decode }
+try:
+#
+	_PY_STR = unicode.encode
+	_PY_UNICODE_TYPE = unicode
+#
+except:
+#
+	_PY_STR = bytes.decode
+	_PY_UNICODE_TYPE = str
+#
 
 class direct_json_parser(object):
 #
@@ -140,7 +148,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
+		global _PY_STR, _PY_UNICODE_TYPE
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data2json(data)- (#echo(__LINE__)#)")
 
 		var_return = ""
@@ -179,9 +187,9 @@ Builds recursively a valid JSON ouput reflecting the given data.
 				var_return = "[{0}]".format(var_return)
 			#
 			elif (var_type == float or var_type == int): var_return = str(data)
-			elif (var_type == str or var_type == _unicode_object['type']):
+			elif (var_type == str or var_type == _PY_UNICODE_TYPE):
 			#
-				if (var_type == _unicode_object['type']): data = _unicode_object['str'](data,"utf-8")
+				if (str !=_PY_UNICODE_TYPE and var_type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 				data = data.replace('"', '\"')
 				data = data.replace("\\", "\\\\")
 				data = data.replace("\x08", "\\b")
@@ -322,10 +330,10 @@ Converts JSON data into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
+		global _PY_STR, _PY_UNICODE_TYPE
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json2data(data)- (#echo(__LINE__)#)")
 
-		if (type(data) == _unicode_object['type']): data = _unicode_object['str'](data,"utf-8")
+		if (str !=_PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
 		if (self.implementation == direct_json_parser.NATIVE):
@@ -513,8 +521,8 @@ Change the content of a specified node.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
-		if (type(node_path) == _unicode_object['type']): node_path = _unicode_object['str'](node_path,"utf-8")
+		global _PY_STR, _PY_UNICODE_TYPE
+		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_change({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
 		var_return = False
@@ -573,8 +581,8 @@ Count the occurrence of a specified node.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
-		if (type(node_path) == _unicode_object['type']): node_path = _unicode_object['str'](node_path,"utf-8")
+		global _PY_STR, _PY_UNICODE_TYPE
+		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_count({0})- (#echo(__LINE__)#)".format(node_path))
 		var_return = 0
@@ -609,8 +617,8 @@ Read a specified node including all children if applicable.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
-		if (type(node_path) == _unicode_object['type']): node_path = _unicode_object['str'](node_path,"utf-8")
+		global _PY_STR, _PY_UNICODE_TYPE
+		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get({0})- (#echo(__LINE__)#)".format(node_path))
 		var_return = False
@@ -696,8 +704,8 @@ Remove a node and all children if applicable.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
-		if (type(node_path) == _unicode_object['type']): node_path = _unicode_object['str'](node_path,"utf-8")
+		global _PY_STR, _PY_UNICODE_TYPE
+		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_remove({0})- (#echo(__LINE__)#)".format(node_path))
 		var_return = False
@@ -760,8 +768,8 @@ Set the cache pointer to a specific node.
 :since:  v0.1.00
 		"""
 
-		global _unicode_object
-		if (type(node_path) == _unicode_object['type']): node_path = _unicode_object['str'](node_path,"utf-8")
+		global _PY_STR, _PY_UNICODE_TYPE
+		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_set_cache_path({0})- (#echo(__LINE__)#)".format(node_path))
 		var_return = False
