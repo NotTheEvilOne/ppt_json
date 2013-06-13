@@ -5,26 +5,9 @@
 JSON (JavaScript Object Notation) is the easiest way to use transfer data
 with JavaScript applications.
 """
-"""n// NOTE
-----------------------------------------------------------------------------
-JSON.py
-JSON parser abstraction layer
-----------------------------------------------------------------------------
-(C) direct Netware Group - All rights reserved
-http://www.direct-netware.de/redirect.py?py;json
 
-This Source Code Form is subject to the terms of the Mozilla Public License,
-v. 2.0. If a copy of the MPL was not distributed with this file, You can
-obtain one at http://mozilla.org/MPL/2.0/.
-----------------------------------------------------------------------------
-http://www.direct-netware.de/redirect.py?licenses;mpl2
-----------------------------------------------------------------------------
-#echo(pyJsonVersion)#
-#echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
-
-import json, re
+import json
+import re
 
 try:
 #
@@ -37,7 +20,7 @@ except:
 	_PY_UNICODE_TYPE = str
 #
 
-class direct_json_parser(object):
+class JsonParser(object):
 #
 	"""
 This class provides a bridge between Python and JSON to read JSON on the
@@ -72,7 +55,7 @@ RegExp to find node names with a specified position in a list
 	def __init__(self, parse_only = True, struct_type = dict, event_handler = None):
 	#
 		"""
-Constructor __init__(direct_json_parser)
+Constructor __init__(JsonParser)
 
 :param parse_only: Parse data only
 :param struct_type: Dict implementation for new struct elements
@@ -125,7 +108,7 @@ Convert the cached JSON PHP data into a JSON string.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.cache_export(flush)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.cache_export(flush)- (129)")
 
 		if (self.data == None): var_return = ""
 		else:
@@ -149,11 +132,11 @@ Builds recursively a valid JSON ouput reflecting the given data.
 		"""
 
 		global _PY_STR, _PY_UNICODE_TYPE
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data2json(data)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.data2json(data)- (153)")
 
 		var_return = ""
 
-		if (self.implementation == direct_json_parser.NATIVE): var_return = json.dumps(data)
+		if (self.implementation == JsonParser.NATIVE): var_return = json.dumps(data)
 		else:
 		#
 			var_type = type(data)
@@ -217,7 +200,7 @@ completed.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.define_parse_only(parse_only)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.define_parse_only(parse_only)- (221)")
 
 		var_type = type(parse_only)
 
@@ -242,7 +225,7 @@ ignored.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.find_string(data, {0}, zone_tag)- (#echo(__LINE__)#)".format(end_tag))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.find_string(data, {0}, zone_tag)- (246)".format(end_tag))
 		var_return = False
 
 		zone_count = 0
@@ -269,7 +252,7 @@ ignored.
 				#
 			#
 
-			re_result = direct_json_parser.RE_ESCAPED.search(data)
+			re_result = JsonParser.RE_ESCAPED.search(data)
 
 			if (re_result != None and (len(re_result.group(1)) % 2) == 1): cache += data
 			elif (len(data_list) > 0):
@@ -302,7 +285,7 @@ This operation just gives back the content of self.data.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get()- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.get()- (306)")
 		return (False if (self.data == None) else self.data)
 	#
 
@@ -315,7 +298,7 @@ Returns the parser implementation in use.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_implementation()- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.get_implementation()- (319)")
 		return self.implementation
 	#
 
@@ -331,12 +314,12 @@ Converts JSON data into the corresponding PHP data ...
 		"""
 
 		global _PY_STR, _PY_UNICODE_TYPE
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json2data(data)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.json2data(data)- (335)")
 
 		if (str !=_PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
-		if (self.implementation == direct_json_parser.NATIVE):
+		if (self.implementation == JsonParser.NATIVE):
 		#
 			try: var_return = json.loads(data)
 			except: var_return = None
@@ -366,7 +349,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json2data_walker(data, end_tag)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.json2data_walker(data, end_tag)- (370)")
 		var_return = None
 
 		data = data.strip()
@@ -502,7 +485,7 @@ or objects are possible for numeric path definitions.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_add(node_path, data)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_add(node_path, data)- (506)".format(node_path))
 
 		if (self.data == None): self.data = self.struct_type()
 		return self.node_change(node_path, data, True)
@@ -524,17 +507,17 @@ Change the content of a specified node.
 		global _PY_STR, _PY_UNICODE_TYPE
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_change({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_change({0}, data, add)- (528)".format(node_path))
 		var_return = False
 
 		if (type(node_path) == str):
 		#
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or direct_json_parser.RE_NODE_NUMBER.match(node_path)):
+			if (len(node_path_list) > 1 or JsonParser.RE_NODE_NUMBER.match(node_path)):
 			#
 				node_name = node_path_list.pop()
-				re_result = direct_json_parser.RE_NODE_NUMBER.match(node_name)
+				re_result = JsonParser.RE_NODE_NUMBER.match(node_name)
 
 				if (re_result != None and self.node_count(re_result.group(0))):
 				#
@@ -584,7 +567,7 @@ Count the occurrence of a specified node.
 		global _PY_STR, _PY_UNICODE_TYPE
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_count({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_count({0})- (588)".format(node_path))
 		var_return = 0
 
 		if (type(node_path) == str):
@@ -620,7 +603,7 @@ Read a specified node including all children if applicable.
 		global _PY_STR, _PY_UNICODE_TYPE
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_get({0})- (624)".format(node_path))
 		var_return = False
 
 		if (type(node_path) == str):
@@ -644,7 +627,7 @@ Returns the pointer to a specific node.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get_ptr({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_get_ptr({0})- (648)".format(node_path))
 		var_return = False
 
 		if (type(node_path) == str):
@@ -666,7 +649,7 @@ Returns the pointer to a specific node.
 
 				if (isinstance(node_ptr, dict) or type(node_ptr) == list):
 				#
-					re_result = direct_json_parser.RE_NODE_NUMBER.match(node_path)
+					re_result = JsonParser.RE_NODE_NUMBER.match(node_path)
 
 					if (node_name in node_ptr):
 					#
@@ -707,7 +690,7 @@ Remove a node and all children if applicable.
 		global _PY_STR, _PY_UNICODE_TYPE
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_remove({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_remove({0})- (711)".format(node_path))
 		var_return = False
 
 		if (type(node_path) == str):
@@ -718,10 +701,10 @@ Get the parent node of the target.
 
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or direct_json_parser.RE_NODE_NUMBER.match(node_path)):
+			if (len(node_path_list) > 1 or JsonParser.RE_NODE_NUMBER.match(node_path)):
 			#
 				node_name = node_path_list.pop()
-				re_result = direct_json_parser.RE_NODE_NUMBER.match(node_name)
+				re_result = JsonParser.RE_NODE_NUMBER.match(node_name)
 
 				if (re_result != None and self.node_count(re_result.group(0))):
 				#
@@ -771,7 +754,7 @@ Set the cache pointer to a specific node.
 		global _PY_STR, _PY_UNICODE_TYPE
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_set_cache_path({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.node_set_cache_path({0})- (775)".format(node_path))
 		var_return = False
 
 		if (type(node_path) == str):
@@ -805,7 +788,7 @@ Set the cache pointer to a specific node.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(json, overwrite)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.set(json, overwrite)- (809)")
 		var_return = False
 
 		if ((self.data == None or overwrite) and (isinstance(json, dict) or type(json) == list)):
@@ -840,11 +823,11 @@ Set the parser implementation to use.
 :since: v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("dNG/data/json_parser.py -JsonParser.set_implementation(implementation)- (844)")
 
-		if (implementation == None and self.struct_type == dict): self.implementation = direct_json_parser.NATIVE
-		elif (implementation == direct_json_parser.NATIVE and self.struct_type == dict): self.implementation = direct_json_parser.NATIVE
-		else: self.implementation = direct_json_parser.INTERNAL
+		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.NATIVE
+		elif (implementation == JsonParser.NATIVE and self.struct_type == dict): self.implementation = JsonParser.NATIVE
+		else: self.implementation = JsonParser.INTERNAL
 	#
 #
 
