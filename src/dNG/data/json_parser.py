@@ -43,7 +43,7 @@ Use internal parser for JSON operations
 Use native Python functions for JSON operations
 	"""
 
-	RE_ESCAPED = re.compile("([\\\]+)$")
+	RE_ESCAPED = re.compile("(\\\\+)$")
 	"""
 RegExp to find escape characters
 	"""
@@ -238,7 +238,7 @@ ignored.
 		#
 
 		data_list = data.split(end_tag)
-		if (zone_tag != None): re_zone_tag = re.compile("([\\\]*){0}".format(re.escape(zone_tag)))
+		if (zone_tag != None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
 
 		while (var_return == False and len(data_list) > 0):
 		#
