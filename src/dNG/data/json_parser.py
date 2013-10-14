@@ -52,11 +52,11 @@ fly.
             Mozilla Public License, v. 2.0
 	"""
 
-	INTERNAL = 1
+	IMPLEMENTATION_INTERNAL = 1
 	"""
 Use internal parser for JSON operations
 	"""
-	NATIVE = 2
+	IMPLEMENTATION_NATIVE = 2
 	"""
 Use native Python functions for JSON operations
 	"""
@@ -154,7 +154,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 		_return = ""
 
-		if (self.implementation == JsonParser.NATIVE): _return = json.dumps(data)
+		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE): _return = json.dumps(data)
 		else:
 		#
 			_type = type(data)
@@ -337,7 +337,7 @@ Converts JSON data into the corresponding PHP data ...
 		if (str !=_PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
-		if (self.implementation == JsonParser.NATIVE):
+		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE):
 		#
 			try: _return = json.loads(data)
 			except: _return = None
@@ -841,9 +841,9 @@ Set the parser implementation to use.
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
 
-		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.NATIVE
-		elif (implementation == JsonParser.NATIVE and self.struct_type == dict): self.implementation = JsonParser.NATIVE
-		else: self.implementation = JsonParser.INTERNAL
+		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
+		elif (implementation == JsonParser.IMPLEMENTATION_NATIVE and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
+		else: self.implementation = JsonParser.IMPLEMENTATION_INTERNAL
 	#
 #
 
