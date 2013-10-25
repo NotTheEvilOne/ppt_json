@@ -32,7 +32,7 @@ try:
 	_PY_STR = unicode.encode
 	_PY_UNICODE_TYPE = unicode
 #
-except:
+except NameError:
 #
 	_PY_STR = bytes.decode
 	_PY_UNICODE_TYPE = str
@@ -340,7 +340,7 @@ Converts JSON data into the corresponding PHP data ...
 		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE):
 		#
 			try: _return = json.loads(data)
-			except: _return = None
+			except Exception: _return = None
 		#
 		else:
 		#
