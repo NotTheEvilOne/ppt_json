@@ -65,7 +65,7 @@ Use native Python functions for JSON operations
 	"""
 RegExp to find escape characters
 	"""
-	RE_NODE_NUMBER = re.compile("^(.+?)\\#(\\d+)$")
+	RE_NODE_NUMBER = re.compile("^(.+)\\#(\\d+)$")
 	"""
 RegExp to find node names with a specified position in a list
 	"""
@@ -229,7 +229,7 @@ completed.
 		return self.data_parse_only
 	#
 
-	def find_string(self, data, end_tag, zone_tag = None):
+	def _find_string(self, data, end_tag, zone_tag = None):
 	#
 		"""
 Searches the given data for a matching end tag. Sub zone end tags are
@@ -239,12 +239,12 @@ ignored.
 :param end_tag: Ending delimiter
 :param zone_tag: Zone start tag for sub zones
 
-:return: (str) Matched data; False on error
+:return: (str) Matched data; None if not found
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.find_string(data, {0}, zone_tag)- (#echo(__LINE__)#)".format(end_tag))
-		_return = False
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._find_string(data, {0}, zone_tag)- (#echo(__LINE__)#)".format(end_tag))
+		_return = None
 
 		zone_count = 0
 
@@ -258,7 +258,7 @@ ignored.
 		data_list = data.split(end_tag)
 		if (zone_tag != None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
 
-		while (_return == False and len(data_list) > 0):
+		while (_return == None and len(data_list) > 0):
 		#
 			data = data_list.pop(0)
 
@@ -286,7 +286,7 @@ ignored.
 
 			if (len(data_list) > 0):
 			#
-				if (_return != False and zone_tag != None): _return += end_tag
+				if (_return != None and zone_tag != None): _return += end_tag
 				else: cache += end_tag
 			#
 		#
@@ -299,12 +299,12 @@ ignored.
 		"""
 This operation just gives back the content of self.data.
 
-:return: (mixed) JSON data; False on error
+:return: (mixed) JSON data; None if not parsed
 :since:  v0.1.00
 		"""
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get()- (#echo(__LINE__)#)")
-		return (False if (self.data == None) else self.data)
+		return self.data
 	#
 
 	def get_implementation(self):
@@ -350,7 +350,7 @@ Converts JSON data into the corresponding PHP data ...
 			elif (data[0] == "["): _return = self._json2data_walker(data[1:], "]")
 		#
 
-		if (_return and (not self.data_parse_only)): self.data = _return
+		if (not self.data_parse_only): self.data = _return
 		return _return
 	#
 
@@ -362,7 +362,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :param data: Input JSON data
 :param end_tag: Ending delimiter
 
-:return: (mixed) JSON data; False on error
+:return: (mixed) JSON data; None on error
 :since:  v0.1.00
 		"""
 
@@ -377,13 +377,13 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 			while (len(data) > 0 and _return != None):
 			#
-				if (data[0] == "{"): data_part = self.find_string(data, "}", "{")
-				elif (data[0] == "["): data_part = self.find_string(data, "]", "[")
-				else: data_part = self.find_string(data, ",")
+				if (data[0] == "{"): data_part = self._find_string(data, "}", "{")
+				elif (data[0] == "["): data_part = self._find_string(data, "]", "[")
+				else: data_part = self._find_string(data, ",")
 
-				if (data_part == False): data_part = self.find_string(data, "]")
+				if (data_part == None): data_part = self._find_string(data, "]")
 
-				if (data_part != False):
+				if (data_part != None):
 				#
 					data = data[len(data_part) + 1:].strip()
 
@@ -417,21 +417,21 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 					if (key_string_tag != None):
 					#
-						key = self.find_string(data[1:], key_string_tag)
-						if (key != False): data = data[len(key) + 2:].strip()
+						key = self._find_string(data[1:], key_string_tag)
+						if (key != None): data = data[len(key) + 2:].strip()
 					#
 
 					if (key != False and len(key) > 0 and len(data) > 1 and data[0] == ":"):
 					#
 						data = data[1:].strip()
 
-						if (data[0] == "{"): data_part = self.find_string(data, "}", "{")
-						elif (data[0] == "["): data_part = self.find_string(data, "]", "[")
-						else: data_part = self.find_string(data, ",")
+						if (data[0] == "{"): data_part = self._find_string(data, "}", "{")
+						elif (data[0] == "["): data_part = self._find_string(data, "]", "[")
+						else: data_part = self._find_string(data, ",")
 
-						if (data_part == False): data_part = self.find_string(data, "}")
+						if (data_part == None): data_part = self._find_string(data, "}")
 
-						if (data_part != False):
+						if (data_part != None):
 						#
 							data = data[len(data_part):].strip()
 
@@ -470,10 +470,9 @@ Converts JSON data recursively into the corresponding PHP data ...
 			#
 			else:
 			#
-				_return = self.find_string(data[1:], value_string_tag)
+				_return = self._find_string(data[1:], value_string_tag)
 
-				if (_return == False): _return = None
-				else:
+				if (_return != None):
 				#
 					_return = _return.replace('\"', '"')
 					_return = _return.replace("\\\\", "\\")
@@ -593,14 +592,8 @@ Count the occurrence of a specified node.
 Get the parent node of the target.
 			"""
 
-			if (" " in node_path): node_ptr = self._node_get_ptr(node_path)
-			else: node_ptr = self.data
-
-			if (node_ptr != False):
-			#
-				if (isinstance(node_ptr, dict) or type(node_ptr) == list): _return = len(node_ptr)
-				else: _return = 1
-			#
+			node_ptr = (self._node_get_ptr(node_path) if (" " in node_path) else self.data)
+			if (node_ptr != None): _return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
 		#
 
 		return _return
@@ -613,7 +606,7 @@ Read a specified node including all children if applicable.
 
 :param node_path: Path to the node - delimiter is space
 
-:return: (mixed) JSON data; False on error
+:return: (mixed) JSON data; None on error
 :since:  v0.1.00
 		"""
 
@@ -621,12 +614,12 @@ Read a specified node including all children if applicable.
 		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = False
+		_return = None
 
 		if (type(node_path) == str):
 		#
 			node_ptr = self._node_get_ptr(node_path)
-			if (node_ptr != False): _return = node_ptr.copy()
+			if (node_ptr != None): _return = node_ptr.copy()
 		#
 
 		return _return
@@ -639,12 +632,12 @@ Returns the pointer to a specific node.
 
 :param node_path: Path to the node - delimiter is space
 
-:return: (dict) JSON tree element; False on error
+:return: (dict) JSON tree element; None on error
 :since:  v0.1.00
 		"""
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._node_get_ptr({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = False
+		_return = None
 
 		if (type(node_path) == str):
 		#
@@ -780,7 +773,7 @@ Set the cache pointer to a specific node.
 			#
 				node_ptr = self._node_get_ptr(node_path)
 
-				if (node_ptr != False):
+				if (node_ptr != None):
 				#
 					self.data_cache_node = node_path
 					self.data_cache_ptr = node_ptr
