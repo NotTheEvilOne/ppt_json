@@ -229,71 +229,6 @@ completed.
 		return self.data_parse_only
 	#
 
-	def _find_string(self, data, end_tag, zone_tag = None):
-	#
-		"""
-Searches the given data for a matching end tag. Sub zone end tags are
-ignored.
-
-:param data: Input data
-:param end_tag: Ending delimiter
-:param zone_tag: Zone start tag for sub zones
-
-:return: (str) Matched data; None if not found
-:since:  v0.1.00
-		"""
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._find_string(data, {0}, zone_tag)- (#echo(__LINE__)#)".format(end_tag))
-		_return = None
-
-		zone_count = 0
-
-		if (zone_tag == None): cache = ""
-		else:
-		#
-			cache = data[0]
-			data = data[1:]
-		#
-
-		data_list = data.split(end_tag)
-		if (zone_tag != None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
-
-		while (_return == None and len(data_list) > 0):
-		#
-			data = data_list.pop(0)
-
-			if (zone_tag != None):
-			#
-				for result in re_zone_tag.finditer(data):
-				#
-					if (len(result.group(1)) % 2 == 0): zone_count += 1
-				#
-			#
-
-			re_result = JsonParser.RE_ESCAPED.search(data)
-
-			if (re_result != None and (len(re_result.group(1)) % 2) == 1): cache += data
-			elif (len(data_list) > 0):
-			#
-				if (zone_count):
-				#
-					cache += data
-					zone_count -= 1
-				#
-				else: _return = cache + data
-			#
-			else: cache += data
-
-			if (len(data_list) > 0):
-			#
-				if (_return != None and zone_tag != None): _return += end_tag
-				else: cache += end_tag
-			#
-		#
-
-		return _return
-	#
-
 	def get(self):
 	#
 		"""
@@ -377,11 +312,11 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 			while (len(data) > 0 and _return != None):
 			#
-				if (data[0] == "{"): data_part = self._find_string(data, "}", "{")
-				elif (data[0] == "["): data_part = self._find_string(data, "]", "[")
-				else: data_part = self._find_string(data, ",")
+				if (data[0] == "{"): data_part = JsonParser._find_string(data, "}", "{")
+				elif (data[0] == "["): data_part = JsonParser._find_string(data, "]", "[")
+				else: data_part = JsonParser._find_string(data, ",")
 
-				if (data_part == None): data_part = self._find_string(data, "]")
+				if (data_part == None): data_part = JsonParser._find_string(data, "]")
 
 				if (data_part != None):
 				#
@@ -417,7 +352,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 					if (key_string_tag != None):
 					#
-						key = self._find_string(data[1:], key_string_tag)
+						key = JsonParser._find_string(data[1:], key_string_tag)
 						if (key != None): data = data[len(key) + 2:].strip()
 					#
 
@@ -425,11 +360,11 @@ Converts JSON data recursively into the corresponding PHP data ...
 					#
 						data = data[1:].strip()
 
-						if (data[0] == "{"): data_part = self._find_string(data, "}", "{")
-						elif (data[0] == "["): data_part = self._find_string(data, "]", "[")
-						else: data_part = self._find_string(data, ",")
+						if (data[0] == "{"): data_part = JsonParser._find_string(data, "}", "{")
+						elif (data[0] == "["): data_part = JsonParser._find_string(data, "]", "[")
+						else: data_part = JsonParser._find_string(data, ",")
 
-						if (data_part == None): data_part = self._find_string(data, "}")
+						if (data_part == None): data_part = JsonParser._find_string(data, "}")
 
 						if (data_part != None):
 						#
@@ -470,7 +405,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 			#
 			else:
 			#
-				_return = self._find_string(data[1:], value_string_tag)
+				_return = JsonParser._find_string(data[1:], value_string_tag)
 
 				if (_return != None):
 				#
@@ -543,12 +478,6 @@ Change the content of a specified node.
 				else: node_path = node_path_list.join(" ")
 
 				node_ptr = self._node_get_ptr(node_path)
-
-				if (len(self.data_cache_node) > 0 and node_path.find(self.data_cache_node) == 0):
-				#
-					self.data_cache_node = ""
-					self.data_cache_ptr = self.data
-				#
 			#
 			else:
 			#
@@ -562,6 +491,13 @@ Change the content of a specified node.
 			if ((isinstance(node_ptr, dict) or type(node_ptr) == list) and (add or node_name in node_ptr)):
 			#
 				node_ptr[node_name] = data
+
+				if (self.data_cache_node != ""):
+				#
+					node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
+					if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
+				#
+
 				_return = True
 			#
 		#
@@ -641,7 +577,7 @@ Returns the pointer to a specific node.
 
 		if (type(node_path) == str):
 		#
-			if (len(self.data_cache_node) > 0 and node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()):
+			if (self.data_cache_node != "" and node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()):
 			#
 				node_path = node_path[len(self.data_cache_node):].strip()
 				node_ptr = self.data_cache_ptr
@@ -724,7 +660,7 @@ Get the parent node of the target.
 
 				node_ptr = self._node_get_ptr(node_path)
 
-				if (len(self.data_cache_node) > 0 and node_path[:len(self.data_cache_node)] == self.data_cache_node):
+				if (self.data_cache_node != "" and node_path[:len(self.data_cache_node)] == self.data_cache_node):
 				#
 					self.data_cache_node = ""
 					self.data_cache_ptr = self.data
@@ -837,6 +773,71 @@ Set the parser implementation to use.
 		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
 		elif (implementation == JsonParser.IMPLEMENTATION_NATIVE and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
 		else: self.implementation = JsonParser.IMPLEMENTATION_INTERNAL
+	#
+
+	@staticmethod
+	def _find_string(data, end_tag, zone_tag = None):
+	#
+		"""
+Searches the given data for a matching end tag. Sub zone end tags are
+ignored.
+
+:param data: Input data
+:param end_tag: Ending delimiter
+:param zone_tag: Zone start tag for sub zones
+
+:return: (str) Matched data; None if not found
+:since:  v0.1.00
+		"""
+
+		_return = None
+
+		zone_count = 0
+
+		if (zone_tag == None): cache = ""
+		else:
+		#
+			cache = data[0]
+			data = data[1:]
+		#
+
+		data_list = data.split(end_tag)
+		if (zone_tag != None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
+
+		while (_return == None and len(data_list) > 0):
+		#
+			data = data_list.pop(0)
+
+			if (zone_tag != None):
+			#
+				for result in re_zone_tag.finditer(data):
+				#
+					if (len(result.group(1)) % 2 == 0): zone_count += 1
+				#
+			#
+
+			re_result = JsonParser.RE_ESCAPED.search(data)
+
+			if (re_result != None and (len(re_result.group(1)) % 2) == 1): cache += data
+			elif (len(data_list) > 0):
+			#
+				if (zone_count):
+				#
+					cache += data
+					zone_count -= 1
+				#
+				else: _return = cache + data
+			#
+			else: cache += data
+
+			if (len(data_list) > 0):
+			#
+				if (_return != None and zone_tag != None): _return += end_tag
+				else: cache += end_tag
+			#
+		#
+
+		return _return
 	#
 #
 
