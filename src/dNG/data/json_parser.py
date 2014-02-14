@@ -24,6 +24,8 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 NOTE_END //n"""
 
+# pylint: disable=invalid-name,undefined-variable
+
 import json
 import re
 
@@ -149,7 +151,8 @@ Builds recursively a valid JSON ouput reflecting the given data.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data2json(data)- (#echo(__LINE__)#)")
 
 		_return = ""
@@ -190,7 +193,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 			elif (_type == float or _type == int): _return = str(data)
 			elif (_type == str or _type == _PY_UNICODE_TYPE):
 			#
-				if (str !=_PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
+				if (str != _PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 				data = data.replace('"', '\"')
 				data = data.replace("\\", "\\\\")
 				data = data.replace("\x08", "\\b")
@@ -266,10 +269,12 @@ Converts JSON data into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
+		# global: _PY_STR, _PY_UNICODE_TYPE
+		# pylint: disable=broad-except
+
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json2data(data)- (#echo(__LINE__)#)")
 
-		if (str !=_PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
+		if (str != _PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
 		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE):
@@ -393,7 +398,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 			else: value_string_tag = None
 
 			if (value_string_tag == None):
-			# 
+			#
 				try: _return = int(data)
 				except ValueError: pass
 
@@ -455,8 +460,9 @@ Change the content of a specified node.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
-		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_change({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
 		_return = False
@@ -516,8 +522,9 @@ Count the occurrence of a specified node.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
-		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		# global:  _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_count({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = 0
@@ -546,8 +553,9 @@ Read a specified node including all children if applicable.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
-		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = None
@@ -632,8 +640,9 @@ Remove a node and all children if applicable.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
-		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_remove({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
@@ -696,8 +705,9 @@ Set the cache pointer to a specific node.
 :since:  v0.1.00
 		"""
 
-		global _PY_STR, _PY_UNICODE_TYPE
-		if (str !=_PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_set_cache_path({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
@@ -721,24 +731,24 @@ Set the cache pointer to a specific node.
 		return _return
 	#
 
-	def set(self, json, overwrite = False):
+	def set(self, _json, overwrite = False):
 	#
 		"""
 "Imports" PHP JSON data into the cache.
 
-:param json: Input array
+:param _json: Input array
 :param overwrite: True to overwrite the current (non-empty) cache
 
 :return: (bool) True on success
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(json, overwrite)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(_json, overwrite)- (#echo(__LINE__)#)")
 		_return = False
 
-		if ((self.data == None or overwrite) and (isinstance(json, dict) or type(json) == list)):
+		if ((self.data == None or overwrite) and (isinstance(_json, dict) or type(_json) == list)):
 		#
-			self.data = json
+			self.data = _json
 			_return = True
 		#
 
