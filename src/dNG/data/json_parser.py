@@ -536,7 +536,11 @@ Get the parent node of the target.
 			"""
 
 			node_ptr = (self._node_get_ptr(node_path) if (" " in node_path) else self.data)
-			if (node_ptr != None): _return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
+
+			if (node_ptr != None):
+			#
+				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
+			#
 		#
 
 		return _return
@@ -585,7 +589,10 @@ Returns the pointer to a specific node.
 
 		if (type(node_path) == str):
 		#
-			if (self.data_cache_node != "" and node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()):
+			if (
+				self.data_cache_node != "" and
+				node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()
+			):
 			#
 				node_path = node_path[len(self.data_cache_node):].strip()
 				node_ptr = self.data_cache_ptr
@@ -781,7 +788,10 @@ Set the parser implementation to use.
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
 
 		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
-		elif (implementation == JsonParser.IMPLEMENTATION_NATIVE and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
+		elif (implementation == JsonParser.IMPLEMENTATION_NATIVE and self.struct_type == dict):
+		#
+			self.implementation = JsonParser.IMPLEMENTATION_NATIVE
+		#
 		else: self.implementation = JsonParser.IMPLEMENTATION_INTERNAL
 	#
 
