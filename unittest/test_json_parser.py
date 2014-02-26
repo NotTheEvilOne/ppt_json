@@ -2,12 +2,10 @@
 ##j## BOF
 
 """
-UnitTest for dNG.data.JsonParser
-"""
-"""n// NOTE
-----------------------------------------------------------------------------
 JSON.py
 JSON parser abstraction layer
+"""
+"""n// NOTE
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
 http://www.direct-netware.de/redirect.py?py;json
@@ -33,6 +31,12 @@ class TestJsonParser(unittest.TestCase):
 #
 	def _get_json_test_data(self):
 	#
+		"""
+Test data with a simple string and a nested list of content.
+
+:return: (str) Test data
+		"""
+
 		return """
 {
 "hello": "world",
@@ -43,6 +47,10 @@ class TestJsonParser(unittest.TestCase):
 
 	def test_internal(self):
 	#
+		"""
+Tests the internal JSON parser implementation.
+		"""
+
 		json_parser = JsonParser()
 		json_parser.set_implementation(JsonParser.IMPLEMENTATION_INTERNAL)
 		json_data = json_parser.json2data(self._get_json_test_data())
@@ -58,6 +66,10 @@ class TestJsonParser(unittest.TestCase):
 
 	def test_native(self):
 	#
+		"""
+Tests the native JSON Python parser.
+		"""
+
 		json_parser = JsonParser()
 		json_data = json_parser.json2data(self._get_json_test_data())
 

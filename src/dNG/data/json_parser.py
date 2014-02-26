@@ -2,13 +2,10 @@
 ##j## BOF
 
 """
-JSON (JavaScript Object Notation) is the easiest way to use transfer data
-with JavaScript applications.
-"""
-"""n// NOTE
-----------------------------------------------------------------------------
 JSON.py
 JSON parser abstraction layer
+"""
+"""n// NOTE
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
 http://www.direct-netware.de/redirect.py?py;json
