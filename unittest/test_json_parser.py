@@ -53,7 +53,7 @@ Tests the internal JSON parser implementation.
 
 		json_parser = JsonParser()
 		json_parser.set_implementation(JsonParser.IMPLEMENTATION_INTERNAL)
-		json_data = json_parser.json2data(self._get_json_test_data())
+		json_data = json_parser.json_to_data(self._get_json_test_data())
 
 		self.assertTrue(json_data != None)
 
@@ -71,7 +71,7 @@ Tests the native JSON Python parser.
 		"""
 
 		json_parser = JsonParser()
-		json_data = json_parser.json2data(self._get_json_test_data())
+		json_data = json_parser.json_to_data(self._get_json_test_data())
 
 		self.assertTrue(json_data != None)
 

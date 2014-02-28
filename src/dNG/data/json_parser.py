@@ -130,14 +130,14 @@ Convert the cached JSON PHP data into a JSON string.
 		if (self.data == None): _return = ""
 		else:
 		#
-			_return = self.data2json(self.data)
+			_return = self.data_to_json(self.data)
 			if (flush): self.data = None
 		#
 
 		return _return
 	#
 
-	def data2json(self, data):
+	def data_to_json(self, data):
 	#
 		"""
 Builds recursively a valid JSON ouput reflecting the given data.
@@ -150,7 +150,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data2json(data)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data_to_json(data)- (#echo(__LINE__)#)")
 
 		_return = ""
 
@@ -169,7 +169,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 					for key in data:
 					#
 						if (_return != ""): _return += ","
-						_return += "{0}:{1}".format(self.data2json(str(key)), self.data2json(data[key]))
+						_return += "{0}:{1}".format(self.data_to_json(str(key)), self.data_to_json(data[key]))
 					#
 				#
 
@@ -182,7 +182,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 				for key in range(0, len(data)):
 				#
 					if (_return != ""): _return += ","
-					_return += self.data2json(data[key])
+					_return += self.data_to_json(data[key])
 				#
 
 				_return = "[{0}]".format(_return)
@@ -255,7 +255,7 @@ Returns the parser implementation in use.
 		return self.implementation
 	#
 
-	def json2data(self, data):
+	def json_to_data(self, data):
 	#
 		"""
 Converts JSON data into the corresponding PHP data ...
@@ -269,7 +269,7 @@ Converts JSON data into the corresponding PHP data ...
 		# global: _PY_STR, _PY_UNICODE_TYPE
 		# pylint: disable=broad-except
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json2data(data)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data(data)- (#echo(__LINE__)#)")
 
 		if (str != _PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
@@ -283,15 +283,15 @@ Converts JSON data into the corresponding PHP data ...
 		#
 			_return = None
 
-			if (data[0] == "{"): _return = self._json2data_walker(data[1:], "}")
-			elif (data[0] == "["): _return = self._json2data_walker(data[1:], "]")
+			if (data[0] == "{"): _return = self._json_to_data_walker(data[1:], "}")
+			elif (data[0] == "["): _return = self._json_to_data_walker(data[1:], "]")
 		#
 
 		if (not self.data_parse_only): self.data = _return
 		return _return
 	#
 
-	def _json2data_walker(self, data, end_tag = ""):
+	def _json_to_data_walker(self, data, end_tag = ""):
 	#
 		"""
 Converts JSON data recursively into the corresponding PHP data ...
@@ -303,7 +303,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json2data_walker(data, end_tag)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker(data, end_tag)- (#echo(__LINE__)#)")
 		_return = None
 
 		data = data.strip()
@@ -326,9 +326,9 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 					if (len(data_part) > 0):
 					#
-						if (data_part[0] == "{"): _return.append(self._json2data_walker(data_part[1:], "}"))
-						elif (data_part[0] == "["): _return.append(self._json2data_walker(data_part[1:], "]"))
-						else: _return.append(self._json2data_walker(data_part))
+						if (data_part[0] == "{"): _return.append(self._json_to_data_walker(data_part[1:], "}"))
+						elif (data_part[0] == "["): _return.append(self._json_to_data_walker(data_part[1:], "]"))
+						else: _return.append(self._json_to_data_walker(data_part))
 					#
 				#
 				elif (len(data) > 0 and data != "]"): data = None
@@ -374,9 +374,9 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 							if (len(data_part) > 0):
 							#
-								if (data_part[0] == "{"): _return[key] = self._json2data_walker(data_part[1:], "}")
-								elif (data_part[0] == "["): _return[key] = self._json2data_walker(data_part[1:], "]")
-								else: _return[key] = self._json2data_walker(data_part)
+								if (data_part[0] == "{"): _return[key] = self._json_to_data_walker(data_part[1:], "}")
+								elif (data_part[0] == "["): _return[key] = self._json_to_data_walker(data_part[1:], "]")
+								else: _return[key] = self._json_to_data_walker(data_part)
 							#
 						#
 						elif (len(data) > 0 and data != "}"): data = None
