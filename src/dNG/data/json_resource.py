@@ -37,7 +37,7 @@ except NameError:
 	_PY_UNICODE_TYPE = str
 #
 
-class JsonParser(object):
+class JsonResource(object):
 #
 	"""
 This class provides a bridge between Python and JSON to read JSON on the
@@ -72,7 +72,7 @@ RegExp to find node names with a specified position in a list
 	def __init__(self, parse_only = True, struct_type = dict, event_handler = None):
 	#
 		"""
-Constructor __init__(JsonParser)
+Constructor __init__(JsonResource)
 
 :param parse_only: Parse data only
 :param struct_type: Dict implementation for new struct elements
@@ -154,7 +154,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 		_return = ""
 
-		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE): _return = json.dumps(data)
+		if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE): _return = json.dumps(data)
 		else:
 		#
 			_type = type(data)
@@ -274,7 +274,7 @@ Converts JSON data into the corresponding PHP data ...
 		if (str != _PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
-		if (self.implementation == JsonParser.IMPLEMENTATION_NATIVE):
+		if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
 		#
 			try: _return = json.loads(data)
 			except Exception: _return = None
@@ -314,11 +314,11 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 			while (len(data) > 0 and _return != None):
 			#
-				if (data[0] == "{"): data_part = JsonParser._find_string(data, "}", "{")
-				elif (data[0] == "["): data_part = JsonParser._find_string(data, "]", "[")
-				else: data_part = JsonParser._find_string(data, ",")
+				if (data[0] == "{"): data_part = JsonResource._find_string(data, "}", "{")
+				elif (data[0] == "["): data_part = JsonResource._find_string(data, "]", "[")
+				else: data_part = JsonResource._find_string(data, ",")
 
-				if (data_part == None): data_part = JsonParser._find_string(data, "]")
+				if (data_part == None): data_part = JsonResource._find_string(data, "]")
 
 				if (data_part != None):
 				#
@@ -354,7 +354,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 					if (key_string_tag != None):
 					#
-						key = JsonParser._find_string(data[1:], key_string_tag)
+						key = JsonResource._find_string(data[1:], key_string_tag)
 						if (key != None): data = data[len(key) + 2:].strip()
 					#
 
@@ -362,11 +362,11 @@ Converts JSON data recursively into the corresponding PHP data ...
 					#
 						data = data[1:].strip()
 
-						if (data[0] == "{"): data_part = JsonParser._find_string(data, "}", "{")
-						elif (data[0] == "["): data_part = JsonParser._find_string(data, "]", "[")
-						else: data_part = JsonParser._find_string(data, ",")
+						if (data[0] == "{"): data_part = JsonResource._find_string(data, "}", "{")
+						elif (data[0] == "["): data_part = JsonResource._find_string(data, "]", "[")
+						else: data_part = JsonResource._find_string(data, ",")
 
-						if (data_part == None): data_part = JsonParser._find_string(data, "}")
+						if (data_part == None): data_part = JsonResource._find_string(data, "}")
 
 						if (data_part != None):
 						#
@@ -407,7 +407,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 			#
 			else:
 			#
-				_return = JsonParser._find_string(data[1:], value_string_tag)
+				_return = JsonResource._find_string(data[1:], value_string_tag)
 
 				if (_return != None):
 				#
@@ -468,10 +468,10 @@ Change the content of a specified node.
 		#
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or JsonParser.RE_NODE_NUMBER.match(node_path)):
+			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
 			#
 				node_name = node_path_list.pop()
-				re_result = JsonParser.RE_NODE_NUMBER.match(node_name)
+				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
 
 				if (re_result != None and self.node_count(re_result.group(0))):
 				#
@@ -606,7 +606,7 @@ Returns the pointer to a specific node.
 
 				if (isinstance(node_ptr, dict) or type(node_ptr) == list):
 				#
-					re_result = JsonParser.RE_NODE_NUMBER.match(node_path)
+					re_result = JsonResource.RE_NODE_NUMBER.match(node_path)
 
 					if (node_name in node_ptr):
 					#
@@ -659,10 +659,10 @@ Get the parent node of the target.
 
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or JsonParser.RE_NODE_NUMBER.match(node_path)):
+			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
 			#
 				node_name = node_path_list.pop()
-				re_result = JsonParser.RE_NODE_NUMBER.match(node_name)
+				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
 
 				if (re_result != None and self.node_count(re_result.group(0))):
 				#
@@ -784,12 +784,12 @@ Set the parser implementation to use.
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
 
-		if (implementation == None and self.struct_type == dict): self.implementation = JsonParser.IMPLEMENTATION_NATIVE
-		elif (implementation == JsonParser.IMPLEMENTATION_NATIVE and self.struct_type == dict):
+		if (implementation == None and self.struct_type == dict): self.implementation = JsonResource.IMPLEMENTATION_NATIVE
+		elif (implementation == JsonResource.IMPLEMENTATION_NATIVE and self.struct_type == dict):
 		#
-			self.implementation = JsonParser.IMPLEMENTATION_NATIVE
+			self.implementation = JsonResource.IMPLEMENTATION_NATIVE
 		#
-		else: self.implementation = JsonParser.IMPLEMENTATION_INTERNAL
+		else: self.implementation = JsonResource.IMPLEMENTATION_INTERNAL
 	#
 
 	@staticmethod
@@ -833,7 +833,7 @@ ignored.
 				#
 			#
 
-			re_result = JsonParser.RE_ESCAPED.search(data)
+			re_result = JsonResource.RE_ESCAPED.search(data)
 
 			if (re_result != None and (len(re_result.group(1)) % 2) == 1): cache += data
 			elif (len(data_list) > 0):

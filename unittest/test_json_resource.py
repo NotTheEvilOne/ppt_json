@@ -25,9 +25,9 @@ from os import path
 import sys
 import unittest
 
-from dNG.data.json_parser import JsonParser
+from dNG.data.json_resource import JsonResource
 
-class TestJsonParser(unittest.TestCase):
+class TestJsonResource(unittest.TestCase):
 #
 	def _get_json_test_data(self):
 	#
@@ -51,9 +51,9 @@ Test data with a simple string and a nested list of content.
 Tests the internal JSON parser implementation.
 		"""
 
-		json_parser = JsonParser()
-		json_parser.set_implementation(JsonParser.IMPLEMENTATION_INTERNAL)
-		json_data = json_parser.json_to_data(self._get_json_test_data())
+		json_resource = JsonResource()
+		json_resource.set_implementation(JsonResource.IMPLEMENTATION_INTERNAL)
+		json_data = json_resource.json_to_data(self._get_json_test_data())
 
 		self.assertTrue(json_data != None)
 
@@ -70,8 +70,8 @@ Tests the internal JSON parser implementation.
 Tests the native JSON Python parser.
 		"""
 
-		json_parser = JsonParser()
-		json_data = json_parser.json_to_data(self._get_json_test_data())
+		json_resource = JsonResource()
+		json_data = json_resource.json_to_data(self._get_json_test_data())
 
 		self.assertTrue(json_data != None)
 
