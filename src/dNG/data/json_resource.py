@@ -114,24 +114,119 @@ Dict implementation used to create new struct elements
 		self.set_implementation()
 	#
 
-	def cache_export(self, flush = False):
+	def add_node(self, node_path, data):
 	#
 		"""
-Convert the cached JSON PHP data into a JSON string.
+Adds a node with content. Recursion is not supported because both arrays
+or objects are possible for numeric path definitions.
 
-:param flush: True to delete the cache content
+:param node_path: Path to the new node - delimiter is space
+:param data: Data for the new node
 
-:return: (str) Result string
+:return: (bool) False on error
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.cache_export(flush)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.add_node(node_path, data)- (#echo(__LINE__)#)".format(node_path))
 
-		if (self.data == None): _return = ""
-		else:
+		if (self.data == None): self.data = self.struct_type()
+		return self.change_node(node_path, data, True)
+	#
+
+	def change_node(self, node_path, data, add = False):
+	#
+		"""
+Change the content of a specified node.
+
+:param node_path: Path to the new node - delimiter is space
+:param data: Data for the new node
+:param add: Add an undefined node
+
+:return: (bool) False on error
+:since:  v0.1.00
+		"""
+
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.change_node({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
+		_return = False
+
+		if (type(node_path) == str):
 		#
-			_return = self.data_to_json(self.data)
-			if (flush): self.data = None
+			node_path_list = node_path.split(" ")
+
+			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
+			#
+				node_name = node_path_list.pop()
+				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
+
+				if (re_result != None and self.count_node(re_result.group(0))):
+				#
+					node_path = re_result.group(1)
+					node_name = re_result.group(2)
+				#
+				else: node_path = node_path_list.join(" ")
+
+				node_ptr = self._get_node_ptr(node_path)
+			#
+			else:
+			#
+				node_name = node_path
+				node_ptr = self.data
+
+				self.data_cache_node = ""
+				self.data_cache_ptr = self.data
+			#
+
+			if ((isinstance(node_ptr, dict) or type(node_ptr) == list) and (add or node_name in node_ptr)):
+			#
+				node_ptr[node_name] = data
+
+				if (self.data_cache_node != ""):
+				#
+					node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
+					if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
+				#
+
+				_return = True
+			#
+		#
+
+		return _return
+	#
+
+	def count_node(self, node_path):
+	#
+		"""
+Count the occurrence of a specified node.
+
+:param node_path: Path to the node - delimiter is space
+
+:return: (int) Counted number off matching nodes
+:since:  v0.1.00
+		"""
+
+		# global:  _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)".format(node_path))
+		_return = 0
+
+		if (type(node_path) == str):
+		#
+			"""
+Get the parent node of the target.
+			"""
+
+			node_ptr = (self._get_node_ptr(node_path) if (" " in node_path) else self.data)
+
+			if (node_ptr != None):
+			#
+				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
+			#
 		#
 
 		return _return
@@ -206,27 +301,27 @@ Builds recursively a valid JSON ouput reflecting the given data.
 		return _return
 	#
 
-	def define_parse_only(self, parse_only = True):
+	def export_cache(self, flush = False):
 	#
 		"""
-Changes the object behaviour of deleting cached data after parsing is
-completed.
+Convert the cached JSON PHP data into a JSON string.
 
-:param parse_only: Parse data only
+:param flush: True to delete the cache content
 
-:return: (bool) Accepted state
+:return: (str) Result string
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.define_parse_only(parse_only)- (#echo(__LINE__)#)")
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.export_cache(flush)- (#echo(__LINE__)#)")
 
-		_type = type(parse_only)
+		if (self.data == None): _return = ""
+		else:
+		#
+			_return = self.data_to_json(self.data)
+			if (flush): self.data = None
+		#
 
-		if ((_type == bool and parse_only) or (_type == str and parse_only == "1")): self.data_parse_only = True
-		elif (parse_only == None and (not self.data_parse_only)): self.data_parse_only = True
-		else: self.data_parse_only = False
-
-		return self.data_parse_only
+		return _return
 	#
 
 	def get(self):
@@ -253,6 +348,96 @@ Returns the parser implementation in use.
 
 		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_implementation()- (#echo(__LINE__)#)")
 		return self.implementation
+	#
+
+	def get_node(self, node_path):
+	#
+		"""
+Read a specified node including all children if applicable.
+
+:param node_path: Path to the node - delimiter is space
+
+:return: (mixed) JSON data; None on error
+:since:  v0.1.00
+		"""
+
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)".format(node_path))
+		_return = None
+
+		if (type(node_path) == str):
+		#
+			node_ptr = self._get_node_ptr(node_path)
+			if (node_ptr != None): _return = node_ptr.copy()
+		#
+
+		return _return
+	#
+
+	def _get_node_ptr(self, node_path):
+	#
+		"""
+Returns the pointer to a specific node.
+
+:param node_path: Path to the node - delimiter is space
+
+:return: (dict) JSON tree element; None on error
+:since:  v0.1.00
+		"""
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
+		_return = None
+
+		if (type(node_path) == str):
+		#
+			if (
+				self.data_cache_node != "" and
+				node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()
+			):
+			#
+				node_path = node_path[len(self.data_cache_node):].strip()
+				node_ptr = self.data_cache_ptr
+			#
+			else: node_ptr = self.data
+
+			is_valid = True
+			node_path_list = (node_path.split(" ") if (len(node_path) > 0) else [ ])
+
+			while (is_valid and len(node_path_list) > 0):
+			#
+				is_valid = False
+				node_name = node_path_list.pop(0)
+
+				if (isinstance(node_ptr, dict) or type(node_ptr) == list):
+				#
+					re_result = JsonResource.RE_NODE_NUMBER.match(node_path)
+
+					if (node_name in node_ptr):
+					#
+						is_valid = True
+						node_ptr = node_ptr[node_name]
+					#
+					elif (re_result != None):
+					#
+						node_name = re_result.group(1)
+						node_path_list.insert(0, re_result.group(2))
+
+						if (node_name in node_ptr):
+						#
+							is_valid = True
+							node_ptr = node_ptr[node_name]
+						#
+					#
+				#
+			#
+
+			if (is_valid): _return = node_ptr
+		#
+
+		return _return
 	#
 
 	def json_to_data(self, data):
@@ -425,215 +610,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 		return _return
 	#
 
-	def node_add(self, node_path, data):
-	#
-		"""
-Adds a node with content. Recursion is not supported because both arrays
-or objects are possible for numeric path definitions.
-
-:param node_path: Path to the new node - delimiter is space
-:param data: Data for the new node
-
-:return: (bool) False on error
-:since:  v0.1.00
-		"""
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_add(node_path, data)- (#echo(__LINE__)#)".format(node_path))
-
-		if (self.data == None): self.data = self.struct_type()
-		return self.node_change(node_path, data, True)
-	#
-
-	def node_change(self, node_path, data, add = False):
-	#
-		"""
-Change the content of a specified node.
-
-:param node_path: Path to the new node - delimiter is space
-:param data: Data for the new node
-:param add: Add an undefined node
-
-:return: (bool) False on error
-:since:  v0.1.00
-		"""
-
-		# global: _PY_STR, _PY_UNICODE_TYPE
-
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_change({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
-		_return = False
-
-		if (type(node_path) == str):
-		#
-			node_path_list = node_path.split(" ")
-
-			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
-			#
-				node_name = node_path_list.pop()
-				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
-
-				if (re_result != None and self.node_count(re_result.group(0))):
-				#
-					node_path = re_result.group(1)
-					node_name = re_result.group(2)
-				#
-				else: node_path = node_path_list.join(" ")
-
-				node_ptr = self._node_get_ptr(node_path)
-			#
-			else:
-			#
-				node_name = node_path
-				node_ptr = self.data
-
-				self.data_cache_node = ""
-				self.data_cache_ptr = self.data
-			#
-
-			if ((isinstance(node_ptr, dict) or type(node_ptr) == list) and (add or node_name in node_ptr)):
-			#
-				node_ptr[node_name] = data
-
-				if (self.data_cache_node != ""):
-				#
-					node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
-					if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
-				#
-
-				_return = True
-			#
-		#
-
-		return _return
-	#
-
-	def node_count(self, node_path):
-	#
-		"""
-Count the occurrence of a specified node.
-
-:param node_path: Path to the node - delimiter is space
-
-:return: (int) Counted number off matching nodes
-:since:  v0.1.00
-		"""
-
-		# global:  _PY_STR, _PY_UNICODE_TYPE
-
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_count({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = 0
-
-		if (type(node_path) == str):
-		#
-			"""
-Get the parent node of the target.
-			"""
-
-			node_ptr = (self._node_get_ptr(node_path) if (" " in node_path) else self.data)
-
-			if (node_ptr != None):
-			#
-				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
-			#
-		#
-
-		return _return
-	#
-
-	def node_get(self, node_path):
-	#
-		"""
-Read a specified node including all children if applicable.
-
-:param node_path: Path to the node - delimiter is space
-
-:return: (mixed) JSON data; None on error
-:since:  v0.1.00
-		"""
-
-		# global: _PY_STR, _PY_UNICODE_TYPE
-
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_get({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = None
-
-		if (type(node_path) == str):
-		#
-			node_ptr = self._node_get_ptr(node_path)
-			if (node_ptr != None): _return = node_ptr.copy()
-		#
-
-		return _return
-	#
-
-	def _node_get_ptr(self, node_path):
-	#
-		"""
-Returns the pointer to a specific node.
-
-:param node_path: Path to the node - delimiter is space
-
-:return: (dict) JSON tree element; None on error
-:since:  v0.1.00
-		"""
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._node_get_ptr({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = None
-
-		if (type(node_path) == str):
-		#
-			if (
-				self.data_cache_node != "" and
-				node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()
-			):
-			#
-				node_path = node_path[len(self.data_cache_node):].strip()
-				node_ptr = self.data_cache_ptr
-			#
-			else: node_ptr = self.data
-
-			is_valid = True
-			node_path_list = (node_path.split(" ") if (len(node_path) > 0) else [ ])
-
-			while (is_valid and len(node_path_list) > 0):
-			#
-				is_valid = False
-				node_name = node_path_list.pop(0)
-
-				if (isinstance(node_ptr, dict) or type(node_ptr) == list):
-				#
-					re_result = JsonResource.RE_NODE_NUMBER.match(node_path)
-
-					if (node_name in node_ptr):
-					#
-						is_valid = True
-						node_ptr = node_ptr[node_name]
-					#
-					elif (re_result != None):
-					#
-						node_name = re_result.group(1)
-						node_path_list.insert(0, re_result.group(2))
-
-						if (node_name in node_ptr):
-						#
-							is_valid = True
-							node_ptr = node_ptr[node_name]
-						#
-					#
-				#
-			#
-
-			if (is_valid): _return = node_ptr
-		#
-
-		return _return
-	#
-
-	def node_remove(self, node_path):
+	def remove_node(self, node_path):
 	#
 		"""
 Remove a node and all children if applicable.
@@ -648,7 +625,7 @@ Remove a node and all children if applicable.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_remove({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
 		if (type(node_path) == str):
@@ -664,14 +641,14 @@ Get the parent node of the target.
 				node_name = node_path_list.pop()
 				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
 
-				if (re_result != None and self.node_count(re_result.group(0))):
+				if (re_result != None and self.count_node(re_result.group(0))):
 				#
 					node_path = re_result.group(1)
 					node_name = re_result.group(2)
 				#
 				else: node_path = node_path_list.join(" ")
 
-				node_ptr = self._node_get_ptr(node_path)
+				node_ptr = self._get_node_ptr(node_path)
 
 				if (self.data_cache_node != "" and node_path[:len(self.data_cache_node)] == self.data_cache_node):
 				#
@@ -698,43 +675,6 @@ Get the parent node of the target.
 		return _return
 	#
 
-	def node_set_cache_path(self, node_path):
-	#
-		"""
-Set the cache pointer to a specific node.
-
-:param node_path: Path to the node - delimiter is space
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		# global: _PY_STR, _PY_UNICODE_TYPE
-
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
-
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.node_set_cache_path({0})- (#echo(__LINE__)#)".format(node_path))
-		_return = False
-
-		if (type(node_path) == str):
-		#
-			if (node_path == self.data_cache_node): _return = True
-			else:
-			#
-				node_ptr = self._node_get_ptr(node_path)
-
-				if (node_ptr != None):
-				#
-					self.data_cache_node = node_path
-					self.data_cache_ptr = node_ptr
-					_return = True
-				#
-			#
-		#
-
-		return _return
-	#
-
 	def set(self, _json, overwrite = False):
 	#
 		"""
@@ -754,6 +694,43 @@ Set the cache pointer to a specific node.
 		#
 			self.data = _json
 			_return = True
+		#
+
+		return _return
+	#
+
+	def set_cached_node(self, node_path):
+	#
+		"""
+Set the cache pointer to a specific node.
+
+:param node_path: Path to the node - delimiter is space
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)".format(node_path))
+		_return = False
+
+		if (type(node_path) == str):
+		#
+			if (node_path == self.data_cache_node): _return = True
+			else:
+			#
+				node_ptr = self._get_node_ptr(node_path)
+
+				if (node_ptr != None):
+				#
+					self.data_cache_node = node_path
+					self.data_cache_ptr = node_ptr
+					_return = True
+				#
+			#
 		#
 
 		return _return
@@ -790,6 +767,26 @@ Set the parser implementation to use.
 			self.implementation = JsonResource.IMPLEMENTATION_NATIVE
 		#
 		else: self.implementation = JsonResource.IMPLEMENTATION_INTERNAL
+	#
+
+	def set_parse_only(self, parse_only = True):
+	#
+		"""
+Changes the object behaviour of deleting cached data after parsing is
+completed.
+
+:param parse_only: Parse data only
+
+:since: v0.1.00
+		"""
+
+		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_parse_only(parse_only)- (#echo(__LINE__)#)")
+
+		_type = type(parse_only)
+
+		if ((_type == bool and parse_only) or (_type == str and parse_only == "1")): self.data_parse_only = True
+		elif (parse_only == None and (not self.data_parse_only)): self.data_parse_only = True
+		else: self.data_parse_only = False
 	#
 
 	@staticmethod
