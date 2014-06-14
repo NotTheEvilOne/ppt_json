@@ -371,7 +371,7 @@ Read a specified node including all children if applicable.
 		if (type(node_path) == str):
 		#
 			node_ptr = self._get_node_ptr(node_path)
-			if (node_ptr != None): _return = node_ptr.copy()
+			if (node_ptr != None): _return = (node_ptr.copy() if (type(node_ptr) == dict) else node_ptr)
 		#
 
 		return _return
