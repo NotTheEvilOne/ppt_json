@@ -4,8 +4,6 @@
 """
 JSON.py
 JSON parser abstraction layer
-"""
-"""n// NOTE
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
 http://www.direct-netware.de/redirect.py?py;json
@@ -18,8 +16,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pyJsonVersion)#
 #echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
+"""
 
 # pylint: disable=invalid-name,undefined-variable
 
@@ -64,7 +61,7 @@ Use native Python functions for JSON operations
 	"""
 RegExp to find escape characters
 	"""
-	RE_NODE_NUMBER = re.compile("^(.+)\\#(\\d+)$")
+	RE_NODE_POSITION = re.compile("^(.+)\\#(\\d+)$")
 	"""
 RegExp to find node names with a specified position in a list
 	"""
@@ -155,42 +152,72 @@ Change the content of a specified node.
 
 		if (type(node_path) == str):
 		#
+			"""
+Get the parent node of the target.
+			"""
+
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
+			node_path_count = len(node_path_list)
+			node_name = (node_path if (node_path_count < 2) else None)
+
+			if (node_path_count > 1 or JsonResource.RE_NODE_POSITION.match(node_path)):
 			#
-				node_name = node_path_list.pop()
-				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
-
-				if (re_result != None and self.count_node(re_result.group(0))):
+				if (node_path_count > 1):
 				#
-					node_path = re_result.group(1)
-					node_name = re_result.group(2)
-				#
-				else: node_path = node_path_list.join(" ")
+					node_name = node_path_list.pop()
+					node_path = " ".join(node_path_list)
 
-				node_ptr = self._get_node_ptr(node_path)
+					node_ptr = self._get_node_ptr(node_path)
+				#
+				else:
+				#
+					node_path = ""
+					node_ptr = self._get_node_ptr(JsonResource.RE_NODE_POSITION.match(node_name).group(1))
+				#
 			#
 			else:
 			#
-				node_name = node_path
+				node_path = ""
 				node_ptr = self.data
-
-				self.data_cache_node = ""
-				self.data_cache_ptr = self.data
 			#
 
-			if ((isinstance(node_ptr, dict) or type(node_ptr) == list) and (add or node_name in node_ptr)):
+			"""
+Change the node
+			"""
+
+			re_result = JsonResource.RE_NODE_POSITION.match(node_name)
+
+			if (re_result == None): node_position = -1
+			else:
+			#
+				node_name = re_result.group(1)
+				node_position = int(re_result.group(2))
+			#
+
+			if (isinstance(node_ptr, dict) and node_name in node_ptr):
 			#
 				node_ptr[node_name] = data
+				_return = True
 
 				if (self.data_cache_node != ""):
 				#
 					node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
 					if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
 				#
-
+			#
+			elif (isinstance(node_ptr, list) and node_position >= 0 and node_position < len(node_ptr)):
+			#
+				node_ptr[node_position] = data
 				_return = True
+
+				if (self.data_cache_node != ""):
+				#
+					node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
+					node_path_changed += "#{0:d}".format(node_position)
+
+					if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_position]
+				#
 			#
 		#
 
@@ -410,26 +437,28 @@ Returns the pointer to a specific node.
 				is_valid = False
 				node_name = node_path_list.pop(0)
 
-				if (isinstance(node_ptr, dict) or type(node_ptr) == list):
-				#
-					re_result = JsonResource.RE_NODE_NUMBER.match(node_path)
+				re_result = JsonResource.RE_NODE_POSITION.match(node_name)
 
+				if (re_result == None): node_position = -1
+				else:
+				#
+					node_name = re_result.group(1)
+					node_position = int(re_result.group(2))
+				#
+
+				if (isinstance(node_ptr, dict)):
+				#
 					if (node_name in node_ptr):
 					#
 						is_valid = True
 						node_ptr = node_ptr[node_name]
 					#
-					elif (re_result != None):
-					#
-						node_name = re_result.group(1)
-						node_path_list.insert(0, re_result.group(2))
+				#
 
-						if (node_name in node_ptr):
-						#
-							is_valid = True
-							node_ptr = node_ptr[node_name]
-						#
-					#
+				if (node_position >= 0 and isinstance(node_ptr, list) and node_position < len(node_ptr)):
+				#
+					is_valid = True
+					node_ptr = node_ptr[node_position]
 				#
 			#
 
@@ -635,19 +664,17 @@ Get the parent node of the target.
 
 			node_path_list = node_path.split(" ")
 
-			if (len(node_path_list) > 1 or JsonResource.RE_NODE_NUMBER.match(node_path)):
+			node_path_count = len(node_path_list)
+			node_name = (node_path if (node_path_count < 2) else None)
+
+			if (node_path_count > 1 or JsonResource.RE_NODE_POSITION.match(node_path)):
 			#
-				node_name = node_path_list.pop()
-				re_result = JsonResource.RE_NODE_NUMBER.match(node_name)
-
-				if (re_result != None and self.count_node(re_result.group(0))):
+				if (node_path_count > 1):
 				#
-					node_path = re_result.group(1)
-					node_name = re_result.group(2)
+					node_name = node_path_list.pop()
+					node_ptr = self._get_node_ptr(" ".join(node_path_list))
 				#
-				else: node_path = node_path_list.join(" ")
-
-				node_ptr = self._get_node_ptr(node_path)
+				else: node_ptr = self._get_node_ptr(JsonResource.RE_NODE_POSITION.match(node_name).group(1))
 
 				if (self.data_cache_node != "" and node_path[:len(self.data_cache_node)] == self.data_cache_node):
 				#
@@ -657,16 +684,33 @@ Get the parent node of the target.
 			#
 			else:
 			#
-				node_name = node_path
 				node_ptr = self.data
 
 				self.data_cache_node = ""
 				self.data_cache_ptr = self.data
 			#
 
-			if ((isinstance(node_ptr, dict) or type(node_ptr) == list) and node_name in node_ptr):
+			"""
+Delete the node
+			"""
+
+			re_result = JsonResource.RE_NODE_POSITION.match(node_name)
+
+			if (re_result == None): node_position = -1
+			else:
+			#
+				node_name = re_result.group(1)
+				node_position = int(re_result.group(2))
+			#
+
+			if (isinstance(node_ptr, dict) and node_name in node_ptr):
 			#
 				del(node_ptr[node_name])
+				_return = True
+			#
+			elif (isinstance(node_ptr, list) and node_position >= 0 and node_position < len(node_ptr)):
+			#
+				del(node_ptr[node_position])
 				_return = True
 			#
 		#

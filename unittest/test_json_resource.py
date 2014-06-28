@@ -4,8 +4,6 @@
 """
 JSON.py
 JSON parser abstraction layer
-"""
-"""n// NOTE
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
 http://www.direct-netware.de/redirect.py?py;json
@@ -18,8 +16,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pyJsonVersion)#
 #echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
+"""
 
 from os import path
 import sys
@@ -29,6 +26,12 @@ from dNG.data.json_resource import JsonResource
 
 class TestJsonResource(unittest.TestCase):
 #
+	"""
+Unittest for dNG.data.JsonResource
+
+:since: v0.1.00
+	"""
+
 	def _get_json_test_data(self):
 	#
 		"""
@@ -80,6 +83,30 @@ Tests the native JSON Python parser.
 
 		self.assertTrue("more_complex" in json_data)
 		self.assertEqual([ "this", "that", True, 1 ], json_data['more_complex'])
+	#
+
+	def test_position_change(self):
+	#
+		"""
+Tests a change to a positional entry.
+		"""
+
+		json_resource = JsonResource(parse_only = False)
+		json_resource.json_to_data(self._get_json_test_data())
+
+		self.assertEqual("world", json_resource.get_node("hello"))
+		self.assertEqual("that", json_resource.get_node("more_complex#1"))
+
+		self.assertTrue(json_resource.change_node("more_complex#1", "test"))
+		self.assertEqual("test", json_resource.get_node("more_complex#1"))
+
+		json_resource.set_cached_node("more_complex#1")
+		self.assertTrue(json_resource.change_node("more_complex#1", { "some": "unittests", "never": "work" }))
+		self.assertEqual("work", json_resource.get_node("more_complex#1 never"))
+
+		json_resource.set_cached_node("more_complex#1 never")
+		self.assertTrue(json_resource.change_node("more_complex#1 never", "work but sometimes they do"))
+		self.assertEqual("work but sometimes they do", json_resource.get_node("more_complex#1 never"))
 	#
 #
 
