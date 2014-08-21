@@ -6,13 +6,13 @@ JSON.py
 JSON parser abstraction layer
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
-http://www.direct-netware.de/redirect.py?py;json
+https://www.direct-netware.de/redirect?py;json
 
 This Source Code Form is subject to the terms of the Mozilla Public License,
 v. 2.0. If a copy of the MPL was not distributed with this file, You can
 obtain one at http://mozilla.org/MPL/2.0/.
 ----------------------------------------------------------------------------
-http://www.direct-netware.de/redirect.py?licenses;mpl2
+https://www.direct-netware.de/redirect?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pyJsonVersion)#
 #echo(__FILEPATH__)#
@@ -44,7 +44,7 @@ fly.
 :copyright: (C) direct Netware Group - All rights reserved
 :package:   JSON.py
 :since:     v0.1.00
-:license:   http://www.direct-netware.de/redirect.py?licenses;mpl2
+:license:   https://www.direct-netware.de/redirect?licenses;mpl2
             Mozilla Public License, v. 2.0
 	"""
 
