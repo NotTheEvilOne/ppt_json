@@ -525,7 +525,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 		#
 			_return = [ ]
 
-			while (len(data) > 0 and _return != None):
+			while (len(data) > 0):
 			#
 				if (data[0] == "{"): data_part = JsonResource._find_string(data, "}", "{")
 				elif (data[0] == "["): data_part = JsonResource._find_string(data, "]", "[")
@@ -544,17 +544,20 @@ Converts JSON data recursively into the corresponding PHP data ...
 						else: _return.append(self._json_to_data_walker(data_part))
 					#
 				#
-				elif (len(data) > 0 and data != "]"): data = None
-				else: data = ""
+				else:
+				#
+					if (len(data) > 0 and data != "]"): _return = None
+					break
+				#
 			#
 		#
 		elif (end_tag == "}"):
 		#
 			_return = self.struct_type()
 
-			while (len(data) > 0 and _return != None):
+			while (len(data) > 0):
 			#
-				if (data == "}"): data = ""
+				if (data == "}"): break
 				else:
 				#
 					if (data[0] == ","): data = data[1:].strip()
@@ -595,7 +598,11 @@ Converts JSON data recursively into the corresponding PHP data ...
 						elif (len(data) > 0 and data != "}"): data = None
 						else: data = ""
 					#
-					else: _return = None
+					else:
+					#
+						_return = None
+						break
+					#
 				#
 			#
 		#
