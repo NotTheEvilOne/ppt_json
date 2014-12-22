@@ -124,9 +124,9 @@ or objects are possible for numeric path definitions.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.add_node(node_path, data)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.add_node(node_path, data)- (#echo(__LINE__)#)".format(node_path))
 
-		if (self.data == None): self.data = self.struct_type()
+		if (self.data is None): self.data = self.struct_type()
 		return self.change_node(node_path, data, True)
 	#
 
@@ -147,7 +147,7 @@ Change the content of a specified node.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.change_node({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.change_node({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
 		if (type(node_path) == str):
@@ -188,7 +188,7 @@ Change the node
 
 			re_result = JsonResource.RE_NODE_POSITION.match(node_name)
 
-			if (re_result == None): node_position = -1
+			if (re_result is None): node_position = -1
 			else:
 			#
 				node_name = re_result.group(1)
@@ -239,7 +239,7 @@ Count the occurrence of a specified node.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = 0
 
 		if (type(node_path) == str):
@@ -250,7 +250,7 @@ Get the parent node of the target.
 
 			node_ptr = (self._get_node_ptr(node_path) if (" " in node_path) else self.data)
 
-			if (node_ptr != None):
+			if (node_ptr is not None):
 			#
 				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
 			#
@@ -272,7 +272,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data_to_json(data)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data_to_json(data)- (#echo(__LINE__)#)")
 
 		_return = ""
 
@@ -339,9 +339,9 @@ Convert the cached JSON PHP data into a JSON string.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.export_cache(flush)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.export_cache(flush)- (#echo(__LINE__)#)")
 
-		if (self.data == None): _return = ""
+		if (self.data is None): _return = ""
 		else:
 		#
 			_return = self.data_to_json(self.data)
@@ -360,7 +360,7 @@ This operation just gives back the content of self.data.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get()- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get()- (#echo(__LINE__)#)")
 		return self.data
 	#
 
@@ -373,7 +373,7 @@ Returns the parser implementation in use.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_implementation()- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_implementation()- (#echo(__LINE__)#)")
 		return self.implementation
 	#
 
@@ -392,13 +392,13 @@ Read a specified node including all children if applicable.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = None
 
 		if (type(node_path) == str):
 		#
 			node_ptr = self._get_node_ptr(node_path)
-			if (node_ptr != None): _return = (node_ptr.copy() if (type(node_ptr) == dict) else node_ptr)
+			if (node_ptr is not None): _return = (node_ptr.copy() if (type(node_ptr) == dict) else node_ptr)
 		#
 
 		return _return
@@ -415,7 +415,7 @@ Returns the pointer to a specific node.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = None
 
 		if (type(node_path) == str):
@@ -439,7 +439,7 @@ Returns the pointer to a specific node.
 
 				re_result = JsonResource.RE_NODE_POSITION.match(node_name)
 
-				if (re_result == None): node_position = -1
+				if (re_result is None): node_position = -1
 				else:
 				#
 					node_name = re_result.group(1)
@@ -482,7 +482,7 @@ Converts JSON data into the corresponding PHP data ...
 		# global: _PY_STR, _PY_UNICODE_TYPE
 		# pylint: disable=broad-except
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data(data)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data(data)- (#echo(__LINE__)#)")
 
 		if (str != _PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
@@ -516,7 +516,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker(data, end_tag)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker(data, end_tag)- (#echo(__LINE__)#)")
 		_return = None
 
 		data = data.strip()
@@ -531,9 +531,9 @@ Converts JSON data recursively into the corresponding PHP data ...
 				elif (data[0] == "["): data_part = JsonResource._find_string(data, "]", "[")
 				else: data_part = JsonResource._find_string(data, ",")
 
-				if (data_part == None): data_part = JsonResource._find_string(data, "]")
+				if (data_part is None): data_part = JsonResource._find_string(data, "]")
 
-				if (data_part != None):
+				if (data_part is not None):
 				#
 					data = data[len(data_part) + 1:].strip()
 
@@ -568,10 +568,10 @@ Converts JSON data recursively into the corresponding PHP data ...
 
 					key = False
 
-					if (key_string_tag != None):
+					if (key_string_tag is not None):
 					#
 						key = JsonResource._find_string(data[1:], key_string_tag)
-						if (key != None): data = data[len(key) + 2:].strip()
+						if (key is not None): data = data[len(key) + 2:].strip()
 					#
 
 					if (key != False and len(key) > 0 and len(data) > 1 and data[0] == ":"):
@@ -582,9 +582,9 @@ Converts JSON data recursively into the corresponding PHP data ...
 						elif (data[0] == "["): data_part = JsonResource._find_string(data, "]", "[")
 						else: data_part = JsonResource._find_string(data, ",")
 
-						if (data_part == None): data_part = JsonResource._find_string(data, "}")
+						if (data_part is None): data_part = JsonResource._find_string(data, "}")
 
-						if (data_part != None):
+						if (data_part is not None):
 						#
 							data = data[len(data_part):].strip()
 
@@ -614,12 +614,12 @@ Converts JSON data recursively into the corresponding PHP data ...
 			elif (data[0] == "'"): value_string_tag = "'"
 			else: value_string_tag = None
 
-			if (value_string_tag == None):
+			if (value_string_tag is None):
 			#
 				try: _return = int(data)
 				except ValueError: pass
 
-				if (_return == None):
+				if (_return is None):
 				#
 					try: _return = float(data)
 					except ValueError: pass
@@ -629,7 +629,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 			#
 				_return = JsonResource._find_string(data[1:], value_string_tag)
 
-				if (_return != None):
+				if (_return is not None):
 				#
 					_return = _return.replace('\"', '"')
 					_return = _return.replace("\\\\", "\\")
@@ -660,7 +660,7 @@ Remove a node and all children if applicable.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
 		if (type(node_path) == str):
@@ -703,7 +703,7 @@ Delete the node
 
 			re_result = JsonResource.RE_NODE_POSITION.match(node_name)
 
-			if (re_result == None): node_position = -1
+			if (re_result is None): node_position = -1
 			else:
 			#
 				node_name = re_result.group(1)
@@ -737,10 +737,10 @@ Delete the node
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(_json, overwrite)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(_json, overwrite)- (#echo(__LINE__)#)")
 		_return = False
 
-		if ((self.data == None or overwrite) and (isinstance(_json, dict) or type(_json) == list)):
+		if ((self.data is None or overwrite) and (isinstance(_json, dict) or type(_json) == list)):
 		#
 			self.data = _json
 			_return = True
@@ -764,7 +764,7 @@ Set the cache pointer to a specific node.
 
 		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
 		if (type(node_path) == str):
@@ -774,7 +774,7 @@ Set the cache pointer to a specific node.
 			#
 				node_ptr = self._get_node_ptr(node_path)
 
-				if (node_ptr != None):
+				if (node_ptr is not None):
 				#
 					self.data_cache_node = node_path
 					self.data_cache_ptr = node_ptr
@@ -809,9 +809,9 @@ Set the parser implementation to use.
 :since: v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
 
-		if (implementation == None and self.struct_type == dict): self.implementation = JsonResource.IMPLEMENTATION_NATIVE
+		if (implementation is None and self.struct_type == dict): self.implementation = JsonResource.IMPLEMENTATION_NATIVE
 		elif (implementation == JsonResource.IMPLEMENTATION_NATIVE and self.struct_type == dict):
 		#
 			self.implementation = JsonResource.IMPLEMENTATION_NATIVE
@@ -830,12 +830,12 @@ completed.
 :since: v0.1.00
 		"""
 
-		if (self.event_handler != None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_parse_only(parse_only)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_parse_only(parse_only)- (#echo(__LINE__)#)")
 
 		_type = type(parse_only)
 
 		if ((_type == bool and parse_only) or (_type == str and parse_only == "1")): self.data_parse_only = True
-		elif (parse_only == None and (not self.data_parse_only)): self.data_parse_only = True
+		elif (parse_only is None and (not self.data_parse_only)): self.data_parse_only = True
 		else: self.data_parse_only = False
 	#
 
@@ -858,7 +858,7 @@ ignored.
 
 		zone_count = 0
 
-		if (zone_tag == None): cache = ""
+		if (zone_tag is None): cache = ""
 		else:
 		#
 			cache = data[0]
@@ -866,13 +866,13 @@ ignored.
 		#
 
 		data_list = data.split(end_tag)
-		if (zone_tag != None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
+		if (zone_tag is not None): re_zone_tag = re.compile("([\\\\]*){0}".format(re.escape(zone_tag)))
 
-		while (_return == None and len(data_list) > 0):
+		while (_return is None and len(data_list) > 0):
 		#
 			data = data_list.pop(0)
 
-			if (zone_tag != None):
+			if (zone_tag is not None):
 			#
 				for result in re_zone_tag.finditer(data):
 				#
@@ -882,7 +882,7 @@ ignored.
 
 			re_result = JsonResource.RE_ESCAPED.search(data)
 
-			if (re_result != None and (len(re_result.group(1)) % 2) == 1): cache += data
+			if (re_result is not None and (len(re_result.group(1)) % 2) == 1): cache += data
 			elif (len(data_list) > 0):
 			#
 				if (zone_count):
@@ -896,7 +896,7 @@ ignored.
 
 			if (len(data_list) > 0):
 			#
-				if (_return != None and zone_tag != None): _return += end_tag
+				if (_return is not None and zone_tag is not None): _return += end_tag
 				else: cache += end_tag
 			#
 		#
