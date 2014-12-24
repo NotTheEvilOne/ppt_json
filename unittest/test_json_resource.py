@@ -58,7 +58,7 @@ Tests the internal JSON parser implementation.
 		json_resource.set_implementation(JsonResource.IMPLEMENTATION_INTERNAL)
 		json_data = json_resource.json_to_data(self._get_json_test_data())
 
-		self.assertTrue(json_data != None)
+		self.assertTrue(json_data is not None)
 
 		self.assertTrue("hello" in json_data)
 		self.assertEqual("world", json_data['hello'])
@@ -76,7 +76,7 @@ Tests the native JSON Python parser.
 		json_resource = JsonResource()
 		json_data = json_resource.json_to_data(self._get_json_test_data())
 
-		self.assertTrue(json_data != None)
+		self.assertTrue(json_data is not None)
 
 		self.assertTrue("hello" in json_data)
 		self.assertEqual("world", json_data['hello'])
