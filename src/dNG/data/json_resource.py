@@ -124,7 +124,7 @@ or objects are possible for numeric path definitions.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.add_node(node_path, data)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.add_node()- (#echo(__LINE__)#)".format(node_path))
 
 		if (self.data is None): self.data = self.struct_type()
 		return self.change_node(node_path, data, True)
@@ -145,12 +145,12 @@ Change the content of a specified node.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.change_node({0}, data, add)- (#echo(__LINE__)#)".format(node_path))
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.change_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			"""
 Get the parent node of the target.
@@ -237,12 +237,12 @@ Count the occurrence of a specified node.
 
 		# global:  _PY_STR, _PY_UNICODE_TYPE
 
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = 0
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			"""
 Get the parent node of the target.
@@ -252,7 +252,7 @@ Get the parent node of the target.
 
 			if (node_ptr is not None):
 			#
-				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) == list) else 1)
+				_return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) is list) else 1)
 			#
 		#
 
@@ -272,7 +272,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data_to_json(data)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.data_to_json()- (#echo(__LINE__)#)")
 
 		_return = ""
 
@@ -281,7 +281,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 		#
 			_type = type(data)
 
-			if (_type == bool): _return = ("true" if (data) else "false")
+			if (_type is bool): _return = ("true" if (data) else "false")
 			elif (isinstance(data, dict)):
 			#
 				_return = ""
@@ -309,8 +309,8 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 				_return = "[{0}]".format(_return)
 			#
-			elif (_type == float or _type == int): _return = str(data)
-			elif (_type == str or _type == _PY_UNICODE_TYPE):
+			elif (_type in ( float, int)): _return = str(data)
+			elif (_type in ( str, _PY_UNICODE_TYPE )):
 			#
 				if (str != _PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 				data = data.replace('"', '\"')
@@ -339,7 +339,7 @@ Convert the cached JSON PHP data into a JSON string.
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.export_cache(flush)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.export_cache()- (#echo(__LINE__)#)")
 
 		if (self.data is None): _return = ""
 		else:
@@ -390,15 +390,15 @@ Read a specified node including all children if applicable.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = None
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			node_ptr = self._get_node_ptr(node_path)
-			if (node_ptr is not None): _return = (node_ptr.copy() if (type(node_ptr) == dict) else node_ptr)
+			if (node_ptr is not None): _return = (node_ptr.copy() if (type(node_ptr) is dict) else node_ptr)
 		#
 
 		return _return
@@ -418,7 +418,7 @@ Returns the pointer to a specific node.
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = None
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			if (self.data_cache_node != ""
 			    and node_path[:len(self.data_cache_node)].lower() == self.data_cache_node.lower()
@@ -482,9 +482,9 @@ Converts JSON data into the corresponding PHP data ...
 		# global: _PY_STR, _PY_UNICODE_TYPE
 		# pylint: disable=broad-except
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data(data)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data()- (#echo(__LINE__)#)")
 
-		if (str != _PY_UNICODE_TYPE and type(data) == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(data) is _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
 		data = data.strip()
 
 		if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
@@ -516,7 +516,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker(data, end_tag)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker()- (#echo(__LINE__)#)")
 		_return = None
 
 		data = data.strip()
@@ -658,12 +658,12 @@ Remove a node and all children if applicable.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			"""
 Get the parent node of the target.
@@ -737,10 +737,10 @@ Delete the node
 :since:  v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set(_json, overwrite)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set()- (#echo(__LINE__)#)")
 		_return = False
 
-		if ((self.data is None or overwrite) and (isinstance(_json, dict) or type(_json) == list)):
+		if ((self.data is None or overwrite) and (isinstance(_json, dict) or type(_json) is list)):
 		#
 			self.data = _json
 			_return = True
@@ -762,12 +762,12 @@ Set the cache pointer to a specific node.
 
 		# global: _PY_STR, _PY_UNICODE_TYPE
 
-		if (str != _PY_UNICODE_TYPE and type(node_path) == _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
+		if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)".format(node_path))
 		_return = False
 
-		if (type(node_path) == str):
+		if (type(node_path) is str):
 		#
 			if (node_path == self.data_cache_node): _return = True
 			else:
@@ -809,7 +809,7 @@ Set the parser implementation to use.
 :since: v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation(implementation)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_implementation()- (#echo(__LINE__)#)")
 
 		if (implementation is None and self.struct_type == dict): self.implementation = JsonResource.IMPLEMENTATION_NATIVE
 		elif (implementation == JsonResource.IMPLEMENTATION_NATIVE and self.struct_type == dict):
@@ -830,11 +830,11 @@ completed.
 :since: v0.1.00
 		"""
 
-		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_parse_only(parse_only)- (#echo(__LINE__)#)")
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.set_parse_only()- (#echo(__LINE__)#)")
 
 		_type = type(parse_only)
 
-		if ((_type == bool and parse_only) or (_type == str and parse_only == "1")): self.data_parse_only = True
+		if ((_type is bool and parse_only) or (_type is str and parse_only == "1")): self.data_parse_only = True
 		elif (parse_only is None and (not self.data_parse_only)): self.data_parse_only = True
 		else: self.data_parse_only = False
 	#
