@@ -309,7 +309,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
 				_return = "[{0}]".format(_return)
 			#
-			elif (_type in ( float, int)): _return = str(data)
+			elif (_type in ( float, int )): _return = str(data)
 			elif (_type in ( str, _PY_UNICODE_TYPE )):
 			#
 				if (str != _PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
