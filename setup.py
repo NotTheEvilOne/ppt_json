@@ -48,12 +48,12 @@ with TemporaryDirectory(dir = ".") as build_directory:
 	      version = get_version(),
 	      description = "JSON parser abstraction layer",
 	      long_description = """JSON.py is an abstraction layer for JSON parsing and manipulation.""",
-	      author = "direct Netware Group",
+	      author = "direct Netware Group et al.",
 	      author_email = "web@direct-netware.de",
 	      license = "MPL2",
 	      url = "https://www.direct-netware.de/redirect?py;json",
 
-	      platforms=[ "any" ],
+	      platforms = [ "any" ],
 
 	      package_dir = { "": _build_path },
 	      packages = [ "dNG" ],
