@@ -20,6 +20,7 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 # pylint: disable=invalid-name,undefined-variable
 
+from copy import copy
 import json
 import re
 
@@ -471,7 +472,7 @@ Returns the pointer to a specific node.
 	def json_to_data(self, data):
 	#
 		"""
-Converts JSON data into the corresponding PHP data ...
+Converts JSON data into a Python representation.
 
 :param data: Input JSON data
 
@@ -479,28 +480,19 @@ Converts JSON data into the corresponding PHP data ...
 :since:  v0.1.00
 		"""
 
-		# global: _PY_STR, _PY_UNICODE_TYPE
 		# pylint: disable=broad-except
 
 		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.json_to_data()- (#echo(__LINE__)#)")
 
-		if (str is not _PY_UNICODE_TYPE and type(data) is _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
-		data = data.strip()
+		try:
+		#
+			self.parse(data)
+			_return = (self.data.copy() if (hasattr(self.data, "copy")) else copy(self.data))
+		#
+		except Exception: _return = None
 
-		if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
-		#
-			try: _return = json.loads(data)
-			except Exception: _return = None
-		#
-		else:
-		#
-			_return = None
+		if (not self.data_parse_only): self.data = None
 
-			if (data[0] == "{"): _return = self._json_to_data_walker(data[1:], "}")
-			elif (data[0] == "["): _return = self._json_to_data_walker(data[1:], "]")
-		#
-
-		if (not self.data_parse_only): self.data = _return
 		return _return
 	#
 
@@ -643,6 +635,29 @@ Converts JSON data recursively into the corresponding PHP data ...
 		#
 
 		return _return
+	#
+
+	def parse(self, data):
+	#
+		"""
+Parses the given JSON data.
+
+:param data: Input JSON data
+
+:since: v0.1.03
+		"""
+
+		# global: _PY_STR, _PY_UNICODE_TYPE
+
+		if (self.event_handler is not None): self.event_handler.debug("#echo(__FILEPATH__)# -json.parse()- (#echo(__LINE__)#)")
+
+		if (str is not _PY_UNICODE_TYPE and type(data) is _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
+		data = data.strip()
+
+		if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE): self.data = json.loads(data)
+		elif (data[0] == "{"): self.data = self._json_to_data_walker(data[1:], "}")
+		elif (data[0] == "["): self.data = self._json_to_data_walker(data[1:], "]")
+		else: self.data = None
 	#
 
 	def remove_node(self, node_path):
