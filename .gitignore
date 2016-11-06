@@ -4,5 +4,6 @@ __py*
 nbproject
 /_extras
 /build
-/json.*
+/json.py.*
 /make*.py*
+/py_json.*
