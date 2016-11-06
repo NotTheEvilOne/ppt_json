@@ -438,7 +438,7 @@ Converts JSON data into a Python representation.
             _return = (self.data.copy() if (hasattr(self.data, "copy")) else copy(self.data))
         except Exception: _return = None
 
-        if (not self.data_parse_only): self.data = None
+        if (self.data_parse_only): self.data = None
 
         return _return
     #
