@@ -19,6 +19,7 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 # pylint: disable=invalid-name,undefined-variable
 
+from copy import copy
 from weakref import proxy, ProxyTypes
 import json
 import re
@@ -111,7 +112,7 @@ Return the Python representation data of this "JsonResource" instance.
 :since:  v1.0.0
         """
 
-        return self._data.copy()
+        return (self._data.copy() if (hasattr(self._data, "copy")) else copy(self._data))
     #
 
     @data.setter
