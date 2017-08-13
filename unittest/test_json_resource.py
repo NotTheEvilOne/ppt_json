@@ -50,7 +50,9 @@ Tests the internal JSON parser implementation.
 
         json_resource = JsonResource()
         json_resource.set_implementation(JsonResource.IMPLEMENTATION_INTERNAL)
-        json_data = json_resource.json_to_data(self._get_json_test_data())
+        json_resource.parse(self._get_json_test_data())
+
+        json_data = json_resource.data
 
         self.assertTrue(json_data is not None)
 
@@ -66,8 +68,7 @@ Tests the internal JSON parser implementation.
 Tests the native JSON Python parser.
         """
 
-        json_resource = JsonResource()
-        json_data = json_resource.json_to_data(self._get_json_test_data())
+        json_data = JsonResource.json_to_data(self._get_json_test_data())
 
         self.assertTrue(json_data is not None)
 
@@ -83,8 +84,8 @@ Tests the native JSON Python parser.
 Tests a change to a positional entry.
         """
 
-        json_resource = JsonResource(parse_only = False)
-        json_resource.json_to_data(self._get_json_test_data())
+        json_resource = JsonResource()
+        json_resource.parse(self._get_json_test_data())
 
         self.assertEqual("world", json_resource.get_node("hello"))
         self.assertEqual("that", json_resource.get_node("more_complex#1"))
