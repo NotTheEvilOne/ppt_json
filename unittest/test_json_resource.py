@@ -25,7 +25,7 @@ class TestJsonResource(unittest.TestCase):
     """
 Unittest for dNG.data.JsonResource
 
-:since: v0.1.00
+:since: v0.1.0
     """
 
     def _get_json_test_data(self):

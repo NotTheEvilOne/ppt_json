@@ -39,7 +39,7 @@ fly.
 :author:    direct Netware Group
 :copyright: (C) direct Netware Group - All rights reserved
 :package:   JSON.py
-:since:     v0.1.00
+:since:     v0.1.0
 :license:   https://www.direct-netware.de/redirect?licenses;mpl2
             Mozilla Public License, v. 2.0
     """
@@ -69,7 +69,7 @@ Constructor __init__(JsonResource)
 :param struct_type: Dict implementation for new struct elements
 :param log_handler: Log handler to use
 
-:since: v0.1.00
+:since: v0.1.0
         """
 
         self._data = None
@@ -121,7 +121,7 @@ Sets the Python representation data of this "JsonResource" instance.
 
 :param data_dict: Python representation data
 
-:since: v0.1.00
+:since: v1.0.0
         """
 
         self.set_json(data_dict, True)
@@ -185,7 +185,7 @@ or objects are possible for numeric path definitions.
 :param data: Data for the new node
 
 :return: (bool) False on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.add_node()- (#echo(__LINE__)#)".format(node_path))
@@ -203,7 +203,7 @@ Change the content of a specified node.
 :param add: Add an undefined node
 
 :return: (bool) False on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -281,7 +281,7 @@ Count the occurrence of a specified node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (int) Counted number off matching nodes
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global:  _PY_STR, _PY_UNICODE_TYPE
@@ -313,7 +313,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 :param data: Python data
 
 :return: (str) JSON output string
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -392,7 +392,7 @@ Read a specified node including all children if applicable.
 :param node_path: Path to the node - delimiter is space
 
 :return: (mixed) JSON data; None on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -417,7 +417,7 @@ Returns the pointer to a specific node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (dict) JSON tree element; None on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
@@ -473,7 +473,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :param end_tag: Ending delimiter
 
 :return: (mixed) JSON data; None on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker()- (#echo(__LINE__)#)")
@@ -590,7 +590,7 @@ Parses the given JSON data.
 
 :param data: Input JSON data
 
-:since: v0.1.03
+:since: v0.1.3
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -613,7 +613,7 @@ Remove a node and all children if applicable.
 :param node_path: Path to the node - delimiter is space
 
 :return: (bool) False on error
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -682,7 +682,7 @@ Delete the node
 :param overwrite: True to overwrite the current (non-empty) cache
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_json()- (#echo(__LINE__)#)")
@@ -703,7 +703,7 @@ Set the cache pointer to a specific node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -735,7 +735,7 @@ Set the parser implementation to use.
 
 :param implementation: Implementation identifier
 
-:since: v0.1.00
+:since: v0.1.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_implementation()- (#echo(__LINE__)#)")
@@ -757,7 +757,7 @@ ignored.
 :param zone_tag: Zone start tag for sub zones
 
 :return: (str) Matched data; None if not found
-:since:  v0.1.00
+:since:  v0.1.0
         """
 
         _return = None
