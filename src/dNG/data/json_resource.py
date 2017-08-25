@@ -24,6 +24,9 @@ from weakref import proxy, ProxyTypes
 import json
 import re
 
+try: from collections.abc import Mapping
+except ImportError: from collections import Mapping
+
 try:
     _PY_STR = unicode.encode
     _PY_UNICODE_TYPE = unicode
@@ -251,7 +254,7 @@ Change the node
                 node_position = int(re_result.group(2))
             #
 
-            if (isinstance(node_ptr, dict) and node_name in node_ptr):
+            if (isinstance(node_ptr, Mapping) and node_name in node_ptr):
                 node_ptr[node_name] = data
                 _return = True
 
@@ -300,7 +303,7 @@ Get the parent node of the target.
             node_ptr = (self._get_node_ptr(node_path) if (" " in node_path) else self._data)
 
             if (node_ptr is not None):
-                _return = (len(node_ptr) if (isinstance(node_ptr, dict) or type(node_ptr) is list) else 1)
+                _return = (len(node_ptr) if (isinstance(node_ptr, Mapping) or type(node_ptr) is list) else 1)
             #
         #
 
@@ -328,7 +331,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
             _type = type(data)
 
             if (_type is bool): _return = ("true" if (data) else "false")
-            elif (isinstance(data, dict)):
+            elif (isinstance(data, Mapping)):
                 _return = ""
 
                 if (len(data) > 0):
@@ -350,9 +353,9 @@ Builds recursively a valid JSON ouput reflecting the given data.
                 _return = "[{0}]".format(_return)
             elif (_type in ( float, int )): _return = str(data)
             elif (_type in ( str, _PY_UNICODE_TYPE )):
-                if (str != _PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
-                data = data.replace('"', '\"')
+                if (str != _PY_UNICODE_TYPE and _type == _PY_UNICODE_TYPE): data = _PY_STR(data, "utf-8")
                 data = data.replace("\\", "\\\\")
+                data = data.replace("\"", "\\\"")
                 data = data.replace("\x08", "\\b")
                 data = data.replace("\f", "\\f")
                 data = data.replace("\n", "\\n")
@@ -447,7 +450,7 @@ Returns the pointer to a specific node.
                     node_position = int(re_result.group(2))
                 #
 
-                if (isinstance(node_ptr, dict)):
+                if (isinstance(node_ptr, Mapping)):
                     if (node_name in node_ptr):
                         is_valid = True
                         node_ptr = node_ptr[node_name]
@@ -663,7 +666,7 @@ Delete the node
                 node_position = int(re_result.group(2))
             #
 
-            if (isinstance(node_ptr, dict) and node_name in node_ptr):
+            if (isinstance(node_ptr, Mapping) and node_name in node_ptr):
                 del(node_ptr[node_name])
                 _return = True
             elif (isinstance(node_ptr, list) and node_position >= 0 and node_position < len(node_ptr)):
@@ -689,7 +692,7 @@ Delete the node
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_json()- (#echo(__LINE__)#)")
         _return = False
 
-        if ((self._data is None or overwrite) and (isinstance(data_dict, dict) or type(data_dict) is list)):
+        if ((self._data is None or overwrite) and (isinstance(data_dict, Mapping) or type(data_dict) is list)):
             self._data = data_dict
             _return = True
         #
