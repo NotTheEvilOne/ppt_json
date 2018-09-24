@@ -4,6 +4,9 @@ __py*
 nbproject
 /_extras
 /build
+/dist
+/dng_json*
 /json.py.*
-/make*.py*
+/makefile.*
+/MANIFEST
 /py_json.*

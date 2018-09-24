@@ -16,12 +16,23 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 setup.py
 """
 
-from os import path
+from os import makedirs, path
 
-from distutils.core import setup
+try:
+    from setuptools import find_packages, setup
+except ImportError:
+    from distutils import find_packages, setup
+#
 
-from dNG.distutils.command.build_py import BuildPy
-from dNG.distutils.temporary_directory import TemporaryDirectory
+_use_dist_mode = False
+
+try:
+    from dNG.distutils.command.build_py import BuildPy
+    from dNG.distutils.command.sdist import Sdist
+    from dNG.distutils.temporary_directory import TemporaryDirectory
+except ImportError:
+    _use_dist_mode = True
+#
 
 def get_version():
     """
@@ -34,33 +45,42 @@ Returns the version currently in development.
     return "v1.0.0"
 #
 
-with TemporaryDirectory(dir = ".") as build_directory:
-    parameters = { "pyJsonVersion": get_version() }
+_setup = { "name": "dng-json",
+           "version": get_version()[1:],
+           "description": "JSON parser abstraction layer",
+           "long_description": """JSON.py is an abstraction layer for JSON parsing and manipulation.""",
+           "author": "direct Netware Group et al.",
+           "author_email": "web@direct-netware.de",
+           "license": "MPL2",
+           "url": "https://www.direct-netware.de/redirect?py;json",
 
-    BuildPy.set_build_target_path(build_directory)
-    BuildPy.set_build_target_parameters(parameters)
+           "platforms": [ "any" ],
 
-    _build_path = path.join(build_directory, "src")
+           "data_files": [ ( "docs", [ "LICENSE", "README" ]) ]
+          }
 
-    setup(name = "dng-json",
-          version = get_version(),
-          description = "JSON parser abstraction layer",
-          long_description = """JSON.py is an abstraction layer for JSON parsing and manipulation.""",
-          author = "direct Netware Group et al.",
-          author_email = "web@direct-netware.de",
-          license = "MPL2",
-          url = "https://www.direct-netware.de/redirect?py;json",
+if (_use_dist_mode):
+    _setup['package_dir'] = { "": "src" }
+    _setup['packages'] = find_packages("src")
 
-          platforms = [ "any" ],
+    setup(**_setup)
+else:
+    with TemporaryDirectory(dir = ".") as build_directory:
+        parameters = { "pyJsonVersion": get_version() }
 
-          setup_requires = "dng-builder-suite",
+        BuildPy.set_build_target_path(build_directory)
+        BuildPy.set_build_target_parameters(parameters)
 
-          package_dir = { "": _build_path },
-          packages = [ "dNG" ],
+        Sdist.set_build_target_path(build_directory)
+        Sdist.set_build_target_parameters(parameters)
 
-          data_files = [ ( "docs", [ "LICENSE", "README" ]) ],
+        makedirs(path.join(build_directory, "src", "dNG"))
 
-          # Override build_py to first run builder.py over all PAS modules
-          cmdclass = { "build_py": BuildPy }
-         )
+        _setup['packages'] = [ "dNG" ]
+
+        # Customize "cmdclass" to first run builder.py
+        _setup['cmdclass'] = { "build_py": BuildPy, "sdist": Sdist }
+
+        setup(**_setup)
+    #
 #
