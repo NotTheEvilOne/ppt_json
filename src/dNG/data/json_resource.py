@@ -24,8 +24,8 @@ from weakref import proxy, ProxyTypes
 import json
 import re
 
-try: from collections.abc import Mapping
-except ImportError: from collections import Mapping
+try: from collections.abc import Iterator, Mapping
+except ImportError: from collections import Iterator, Mapping
 
 try:
     _PY_STR = unicode.encode
@@ -61,7 +61,7 @@ Use native Python functions for JSON operations
     """
 RegExp to find escape characters
     """
-    RE_NODE_POSITION = re.compile("^(.+)\\#(\\d+)$")
+    RE_NODE_POSITION = re.compile("^(.+)#(\\d+)$")
     """
 RegExp to find node names with a specified position in a list
     """
@@ -326,7 +326,11 @@ Builds recursively a valid JSON ouput reflecting the given data.
 
         _return = ""
 
-        if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE): _return = json.dumps(data)
+        if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
+            _return = json.dumps(data,
+                                 default = self._get_native_serializable_data,
+                                 skipkeys = True
+                                )
         else:
             _type = type(data)
 
@@ -342,12 +346,12 @@ Builds recursively a valid JSON ouput reflecting the given data.
                 #
 
                 _return = "{{{0}}}".format(_return)
-            elif (isinstance(data, list)):
+            elif (isinstance(data, Iterator) or isinstance(data, list)):
                 _return = ""
 
-                for key in range(0, len(data)):
+                for value in data:
                     if (_return != ""): _return += ","
-                    _return += self.data_to_json(data[key])
+                    _return += self.data_to_json(value)
                 #
 
                 _return = "[{0}]".format(_return)
@@ -385,6 +389,24 @@ Convert the Python representation data into a JSON string.
             _return = self.data_to_json(self._data)
             if (flush): self._data = None
         #
+
+        return _return
+    #
+
+    def _get_native_serializable_data(self, o):
+        """
+python.org: default(obj) is a function that should return a serializable
+version of obj or raise TypeError.
+
+:param o: Object to encode
+
+:return: (mixed) Serializable object
+:since:  v1.0.0
+        """
+
+        if (isinstance(o, Mapping)): _return = dict(o)
+        elif (isinstance(o, Iterator)): _return = list(o)
+        else: _return = None
 
         return _return
     #
