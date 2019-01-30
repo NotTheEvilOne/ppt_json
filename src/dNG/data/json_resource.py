@@ -24,8 +24,8 @@ from weakref import proxy, ProxyTypes
 import json
 import re
 
-try: from collections.abc import Iterator, Mapping
-except ImportError: from collections import Iterator, Mapping
+try: from collections.abc import Iterable, Mapping, MutableMapping, MutableSequence, Sequence
+except ImportError: from collections import Iterable, Mapping, MutableMapping, MutableSequence, Sequence
 
 try:
     _PY_STR = unicode.encode
@@ -254,7 +254,7 @@ Change the node
                 node_position = int(re_result.group(2))
             #
 
-            if (isinstance(node_ptr, Mapping) and node_name in node_ptr):
+            if (isinstance(node_ptr, MutableMapping) and node_name in node_ptr):
                 node_ptr[node_name] = data
                 _return = True
 
@@ -262,7 +262,7 @@ Change the node
                     node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
                     if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
                 #
-            elif (isinstance(node_ptr, list) and node_position >= 0 and node_position < len(node_ptr)):
+            elif (isinstance(node_ptr, MutableSequence) and node_position >= 0 and node_position < len(node_ptr)):
                 node_ptr[node_position] = data
                 _return = True
 
@@ -303,7 +303,7 @@ Get the parent node of the target.
             node_ptr = (self._get_node_ptr(node_path) if (" " in node_path) else self._data)
 
             if (node_ptr is not None):
-                _return = (len(node_ptr) if (isinstance(node_ptr, Mapping) or type(node_ptr) is list) else 1)
+                _return = (len(node_ptr) if (isinstance(node_ptr, Mapping) or isinstance(node_ptr, Sequence)) else 1)
             #
         #
 
@@ -346,7 +346,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
                 #
 
                 _return = "{{{0}}}".format(_return)
-            elif (isinstance(data, Iterator) or isinstance(data, list)):
+            elif (isinstance(data, Iterable)):
                 _return = ""
 
                 for value in data:
@@ -405,7 +405,7 @@ version of obj or raise TypeError.
         """
 
         if (isinstance(o, Mapping)): _return = dict(o)
-        elif (isinstance(o, Iterator)): _return = list(o)
+        elif (isinstance(o, Iterable)): _return = list(o)
         else: _return = None
 
         return _return
@@ -479,7 +479,7 @@ Returns the pointer to a specific node.
                     #
                 #
 
-                if (node_position >= 0 and isinstance(node_ptr, list) and node_position < len(node_ptr)):
+                if (node_position >= 0 and isinstance(node_ptr, Sequence) and node_position < len(node_ptr)):
                     is_valid = True
                     node_ptr = node_ptr[node_position]
                 #
@@ -688,10 +688,10 @@ Delete the node
                 node_position = int(re_result.group(2))
             #
 
-            if (isinstance(node_ptr, Mapping) and node_name in node_ptr):
+            if (isinstance(node_ptr, MutableMapping) and node_name in node_ptr):
                 del(node_ptr[node_name])
                 _return = True
-            elif (isinstance(node_ptr, list) and node_position >= 0 and node_position < len(node_ptr)):
+            elif (isinstance(node_ptr, MutableSequence) and node_position >= 0 and node_position < len(node_ptr)):
                 del(node_ptr[node_position])
                 _return = True
             #
@@ -714,7 +714,7 @@ Delete the node
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_json()- (#echo(__LINE__)#)")
         _return = False
 
-        if ((self._data is None or overwrite) and (isinstance(data_dict, Mapping) or type(data_dict) is list)):
+        if ((self._data is None or overwrite) and (isinstance(data_dict, Mapping) or type(data_dict) is Sequence)):
             self._data = data_dict
             _return = True
         #
