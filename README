@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------
-JSON.py
-JSON parser abstraction layer
+direct Python Toolbox
+All-in-one toolbox to encapsulate Python runtime variants
 ----------------------------------------------------------------------------
 
-JSON.py is an abstraction layer for JSON parsing and manipulation.
+"dpt-json" is an abstraction layer for JSON parsing and manipulation.
 
 ----------------------------------------------------------------------------
 Licensing

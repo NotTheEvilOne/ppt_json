@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-JSON.py
-JSON parser abstraction layer
+direct Python Toolbox
+All-in-one toolbox to encapsulate Python runtime variants
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
-https://www.direct-netware.de/redirect?py;json
+https://www.direct-netware.de/redirect?dpt;json
 
 This Source Code Form is subject to the terms of the Mozilla Public License,
 v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -13,19 +13,18 @@ obtain one at http://mozilla.org/MPL/2.0/.
 ----------------------------------------------------------------------------
 https://www.direct-netware.de/redirect?licenses;mpl2
 ----------------------------------------------------------------------------
-#echo(pyJsonVersion)#
-#echo(__FILEPATH__)#
+unittest
 """
 
 import unittest
 
-from dNG.data.json_resource import JsonResource
+from dpt_json import JsonResource
 
 class TestJsonResource(unittest.TestCase):
     """
-Unittest for dNG.data.JsonResource
+Unittest for JsonResource
 
-:since: v0.1.0
+:since: v1.0.0
     """
 
     def _get_json_test_data(self):
@@ -49,7 +48,7 @@ Tests the internal JSON parser implementation.
         """
 
         json_resource = JsonResource()
-        json_resource.set_implementation(JsonResource.IMPLEMENTATION_INTERNAL)
+        json_resource.implementation = JsonResource.IMPLEMENTATION_INTERNAL
         json_resource.parse(self._get_json_test_data())
 
         json_data = json_resource.data

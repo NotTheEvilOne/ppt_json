@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-JSON.py
-JSON parser abstraction layer
+direct Python Toolbox
+All-in-one toolbox to encapsulate Python runtime variants
 ----------------------------------------------------------------------------
 (C) direct Netware Group - All rights reserved
-https://www.direct-netware.de/redirect?py;json
+https://www.direct-netware.de/redirect?dpt;json
 
 This Source Code Form is subject to the terms of the Mozilla Public License,
 v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -13,7 +13,7 @@ obtain one at http://mozilla.org/MPL/2.0/.
 ----------------------------------------------------------------------------
 https://www.direct-netware.de/redirect?licenses;mpl2
 ----------------------------------------------------------------------------
-#echo(pyJsonVersion)#
+#echo(dptJsonVersion)#
 #echo(__FILEPATH__)#
 """
 
@@ -40,12 +40,13 @@ class JsonResource(object):
 This class provides a bridge between Python and JSON to read JSON on the
 fly.
 
-:author:    direct Netware Group
-:copyright: (C) direct Netware Group - All rights reserved
-:package:   JSON.py
-:since:     v0.1.0
-:license:   https://www.direct-netware.de/redirect?licenses;mpl2
-            Mozilla Public License, v. 2.0
+:author:     direct Netware Group
+:copyright:  (C) direct Netware Group - All rights reserved
+:package:    dpt
+:subpackage: json
+:since:      v1.0.0
+:license:    https://www.direct-netware.de/redirect?licenses;mpl2
+             Mozilla Public License, v. 2.0
     """
 
     IMPLEMENTATION_INTERNAL = 1
@@ -73,7 +74,7 @@ Constructor __init__(JsonResource)
 :param struct_type: Dict implementation for new struct elements
 :param log_handler: Log handler to use
 
-:since: v0.1.0
+:since: v1.0.0
         """
 
         self._data = None
@@ -103,7 +104,7 @@ Dict implementation used to create new struct elements
         """
 
         if (log_handler is not None): self.log_handler = log_handler
-        self.set_implementation()
+        self.implementation = None
     #
 
     @property
@@ -143,6 +144,23 @@ Returns the parser implementation in use.
         return self._implementation
     #
 
+    @implementation.setter
+    def implementation(self, implementation):
+        """
+Set the parser implementation to use.
+
+:param implementation: Implementation identifier
+
+:since: v1.0.0
+        """
+
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.implementation()- (#echo(__LINE__)#)")
+
+        if (self.struct_type != dict): self._implementation = JsonResource.IMPLEMENTATION_INTERNAL
+        elif (implementation is None): self._implementation = JsonResource.IMPLEMENTATION_NATIVE
+        else: self._implementation = implementation
+    #
+
     @property
     def json(self):
         """
@@ -158,9 +176,9 @@ Returns the JSON string for the Python representation data of this instance.
     @property
     def log_handler(self):
         """
-Returns the LogHandler.
+Returns the log handler.
 
-:return: (object) LogHandler in use
+:return: (object) Log handler in use
 :since:  v1.0.0
         """
 
@@ -170,9 +188,9 @@ Returns the LogHandler.
     @log_handler.setter
     def log_handler(self, log_handler):
         """
-Sets the LogHandler.
+Sets the log handler.
 
-:param log_handler: LogHandler to use
+:param log_handler: Log handler to use
 
 :since: v1.0.0
         """
@@ -189,7 +207,7 @@ or objects are possible for numeric path definitions.
 :param data: Data for the new node
 
 :return: (bool) False on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.add_node()- (#echo(__LINE__)#)".format(node_path))
@@ -207,7 +225,7 @@ Change the content of a specified node.
 :param add: Add an undefined node
 
 :return: (bool) False on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -285,7 +303,7 @@ Count the occurrence of a specified node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (int) Counted number off matching nodes
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global:  _PY_STR, _PY_UNICODE_TYPE
@@ -317,7 +335,7 @@ Builds recursively a valid JSON ouput reflecting the given data.
 :param data: Python data
 
 :return: (str) JSON output string
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -418,7 +436,7 @@ Read a specified node including all children if applicable.
 :param node_path: Path to the node - delimiter is space
 
 :return: (mixed) JSON data; None on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -443,7 +461,7 @@ Returns the pointer to a specific node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (dict) JSON tree element; None on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
@@ -499,7 +517,7 @@ Converts JSON data recursively into the corresponding PHP data ...
 :param end_tag: Ending delimiter
 
 :return: (mixed) JSON data; None on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._json_to_data_walker()- (#echo(__LINE__)#)")
@@ -616,7 +634,7 @@ Parses the given JSON data.
 
 :param data: Input JSON data
 
-:since: v0.1.3
+:since: v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -639,7 +657,7 @@ Remove a node and all children if applicable.
 :param node_path: Path to the node - delimiter is space
 
 :return: (bool) False on error
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -708,7 +726,7 @@ Delete the node
 :param overwrite: True to overwrite the current (non-empty) cache
 
 :return: (bool) True on success
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_json()- (#echo(__LINE__)#)")
@@ -729,7 +747,7 @@ Set the cache pointer to a specific node.
 :param node_path: Path to the node - delimiter is space
 
 :return: (bool) True on success
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         # global: _PY_STR, _PY_UNICODE_TYPE
@@ -755,23 +773,6 @@ Set the cache pointer to a specific node.
         return _return
     #
 
-    def set_implementation(self, implementation = None):
-        """
-Set the parser implementation to use.
-
-:param implementation: Implementation identifier
-
-:since: v0.1.0
-        """
-
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_implementation()- (#echo(__LINE__)#)")
-
-        if (implementation is None and self.struct_type == dict): self._implementation = JsonResource.IMPLEMENTATION_NATIVE
-        elif (implementation == JsonResource.IMPLEMENTATION_NATIVE and self.struct_type == dict):
-            self._implementation = JsonResource.IMPLEMENTATION_NATIVE
-        else: self._implementation = JsonResource.IMPLEMENTATION_INTERNAL
-    #
-
     @staticmethod
     def _find_string(data, end_tag, zone_tag = None):
         """
@@ -783,7 +784,7 @@ ignored.
 :param zone_tag: Zone start tag for sub zones
 
 :return: (str) Matched data; None if not found
-:since:  v0.1.0
+:since:  v1.0.0
         """
 
         _return = None

@@ -1,7 +1,7 @@
 dNG.data.JsonResource
 =====================
 
-.. autoclass:: dNG.data.json_resource.JsonResource
+.. autoclass:: dpt_json.JsonResource
    :members:
    :undoc-members:
    :show-inheritance:
