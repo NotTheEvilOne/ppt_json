@@ -39,10 +39,10 @@ def get_version():
 Returns the version currently in development.
 
 :return: (str) Version string
-:since:  v1.0.0
+:since:  v0.1.1
     """
 
-    return "v1.0.0"
+    return "v1.0.1"
 #
 
 _setup = { "version": get_version()[1:],

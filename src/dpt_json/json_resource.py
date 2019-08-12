@@ -644,7 +644,9 @@ Parses the given JSON data.
         if (str is not _PY_UNICODE_TYPE and type(data) is _PY_UNICODE_TYPE): data = _PY_STR(data,"utf-8")
         data = data.strip()
 
-        if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE): self._data = json.loads(data)
+        if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
+            try: self._data = json.loads(data)
+            except json.JSONDecodeError: self._data = None
         elif (data[0] == "{"): self._data = self._json_to_data_walker(data[1:], "}")
         elif (data[0] == "["): self._data = self._json_to_data_walker(data[1:], "]")
         else: self._data = None
