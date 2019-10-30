@@ -67,6 +67,19 @@ RegExp to find escape characters
 RegExp to find node names with a specified position in a list
     """
 
+    __slots__ = [ "__weakref__",
+                  "_data",
+                  "data_cache_node",
+                  "data_cache_ptr",
+                  "_implementation",
+                  "_log_handler",
+                  "struct_type"
+                ]
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
+
     def __init__(self, struct_type = dict, log_handler = None):
         """
 Constructor __init__(JsonResource)
