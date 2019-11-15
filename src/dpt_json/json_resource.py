@@ -293,7 +293,7 @@ Change the node
                     node_path_changed = ("{0} {1}".format(node_path, node_name) if (len(node_path) > 0) else node_name)
                     if (self.data_cache_node == node_path_changed): self.data_cache_ptr = node_ptr[node_name]
                 #
-            elif (isinstance(node_ptr, MutableSequence) and node_position >= 0 and node_position < len(node_ptr)):
+            elif (isinstance(node_ptr, MutableSequence) and 0 <= node_position < len(node_ptr)):
                 node_ptr[node_position] = data
                 _return = True
 
