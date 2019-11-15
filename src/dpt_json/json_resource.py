@@ -229,13 +229,13 @@ or objects are possible for numeric path definitions.
         return self.change_node(node_path, data, True)
     #
 
-    def change_node(self, node_path, data, add = False):
+    def change_node(self, node_path, data, add_recursively = False):
         """
 Change the content of a specified node.
 
 :param node_path: Path to the new node - delimiter is space
 :param data: Data for the new node
-:param add: Add an undefined node
+:param add_recursively: True to create undefined nodes
 
 :return: (bool) False on error
 :since:  v1.0.0
@@ -285,7 +285,7 @@ Change the node
                 node_position = int(re_result.group(2))
             #
 
-            if (isinstance(node_ptr, MutableMapping) and node_name in node_ptr):
+            if (isinstance(node_ptr, MutableMapping) and (node_name in node_ptr or add_recursively)):
                 node_ptr[node_name] = data
                 _return = True
 
