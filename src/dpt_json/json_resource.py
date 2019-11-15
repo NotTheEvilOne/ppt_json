@@ -658,8 +658,10 @@ Parses the given JSON data.
         data = data.strip()
 
         if (self.implementation == JsonResource.IMPLEMENTATION_NATIVE):
+            native_error_class = getattr(json, "JSONDecodeError", ValueError)
+
             try: self._data = json.loads(data)
-            except json.JSONDecodeError: self._data = None
+            except native_error_class: self._data = None
         elif (data[0] == "{"): self._data = self._json_to_data_walker(data[1:], "}")
         elif (data[0] == "["): self._data = self._json_to_data_walker(data[1:], "]")
         else: self._data = None
