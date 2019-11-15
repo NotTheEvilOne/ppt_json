@@ -223,7 +223,7 @@ or objects are possible for numeric path definitions.
 :since:  v1.0.0
         """
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.add_node()- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.add_node({0})- (#echo(__LINE__)#)", node_path)
 
         if (self._data is None): self._data = self.struct_type()
         return self.change_node(node_path, data, True)
@@ -245,7 +245,7 @@ Change the content of a specified node.
 
         if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.change_node({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.change_node({0})- (#echo(__LINE__)#)", node_path)
         _return = False
 
         if (type(node_path) is str):
@@ -323,7 +323,7 @@ Count the occurrence of a specified node.
 
         if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.count_node({0})- (#echo(__LINE__)#)", node_path)
         _return = 0
 
         if (type(node_path) is str):
@@ -456,7 +456,7 @@ Read a specified node including all children if applicable.
 
         if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.get_node({0})- (#echo(__LINE__)#)", node_path)
         _return = None
 
         if (type(node_path) is str):
@@ -477,7 +477,7 @@ Returns the pointer to a specific node.
 :since:  v1.0.0
         """
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json._get_node_ptr({0})- (#echo(__LINE__)#)", node_path)
         _return = None
 
         if (type(node_path) is str):
@@ -679,7 +679,7 @@ Remove a node and all children if applicable.
 
         if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.remove_node({0})- (#echo(__LINE__)#)", node_path)
         _return = False
 
         if (type(node_path) is str):
@@ -769,7 +769,7 @@ Set the cache pointer to a specific node.
 
         if (str is not _PY_UNICODE_TYPE and type(node_path) is _PY_UNICODE_TYPE): node_path = _PY_STR(node_path,"utf-8")
 
-        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)".format(node_path))
+        if (self._log_handler is not None): self._log_handler.debug("#echo(__FILEPATH__)# -json.set_cached_node({0})- (#echo(__LINE__)#)", node_path)
         _return = False
 
         if (type(node_path) is str):
