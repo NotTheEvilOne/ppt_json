@@ -42,7 +42,7 @@ Returns the version currently in development.
 :since:  v0.1.1
     """
 
-    return "v1.0.2"
+    return "v1.0.3"
 #
 
 _setup = { "version": get_version()[1:],
