@@ -6,7 +6,6 @@ nbproject
 /_extras
 /build
 /dist
-/dpt_json*
-/dpt-json*
-/makefile.*
+/ppt_json*
 /MANIFEST
+/Pipfile*
